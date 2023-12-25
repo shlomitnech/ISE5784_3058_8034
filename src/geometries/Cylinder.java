@@ -3,6 +3,10 @@ package geometries;
 import primitives.Point;
 import primitives.Vector;
 
+/**
+ * This class represents a cylinder which inherits from Tube and implements Radial Geometry
+ * @author Shlomit and Jessica
+ */
 public class Cylinder extends Tube {
 
     double height;
@@ -16,6 +20,9 @@ public class Cylinder extends Tube {
         return null;
     }
 
+    public String toString(){
+        return String.format("Height: " + height);
+    }
     /*
     public double getHeight() {
         return height;

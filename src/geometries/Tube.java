@@ -4,6 +4,9 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+/***
+ * Class Tube, inherits from Radial Geometry and contains an axisRay and radius
+ */
 public class Tube extends RadialGeometry {
 
     Ray axisRay;
@@ -18,6 +21,9 @@ public class Tube extends RadialGeometry {
         return null;
     }
 
+    public String toString(){
+        return String.format("Radius: " + radius);
+    }
     /*
     public Ray getAxisRay() {
         return axisRay;

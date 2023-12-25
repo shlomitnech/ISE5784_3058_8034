@@ -3,6 +3,10 @@ package geometries;
 import primitives.Point;
 import primitives.Vector;
 
+/**
+ * Plane Class implements the Geometry interface, represents a plane
+ * @author Shlomit and Jessica
+ */
 public class Plane {
     private final Point q0;
     private final Vector normal;
@@ -29,15 +33,22 @@ public class Plane {
     }
 
     /**
-     *
+     *No paramter
      * @return the normal of the vector
      */
     public Vector getNormal() {
         return normal;
     }
 
+    /**
+     * with paramteter
+     * @param p
+     * @returns the normal
+     */
+    public Vector getNormal(Point p){
+        return normal;
+    }
     public String toString(){
-     //   return print("Head: " + p0 + " normal");
-        return null;
+        return String.format("Point: " + q0 + ", Normal: " + normal);
     }
 }

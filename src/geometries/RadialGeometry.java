@@ -10,10 +10,19 @@ public class RadialGeometry implements Geometry{
     public RadialGeometry(double rad) {
         radius = rad;
     }
+
+    /**
+     *
+     * @param p
+     * @return the normal
+     */
     public Vector getNormal(Point p) {
         return null;
     }
 
+    public String toString(){
+        return String.format("Radius: " + radius);
+    }
 
 
 }
