@@ -32,14 +32,15 @@ public class Vector extends Point{
     @Override
     public boolean equals(Object obj) {
         if (this==obj) return true;
-        if (obj == null) return false;
+        return (obj instanceof Vector other) && this.xyz.equals(other.xyz);
+       /* if (obj == null) return false;
         if (!(obj instanceof Point)) //if the object is not a point
             return false;
         Point other = (Point)obj;
-        return super.equals(other);
+        return super.equals(other);*/
     }
 
-    @Override
+        @Override
     public String toString() {return "->" + super.toString();
     }
 

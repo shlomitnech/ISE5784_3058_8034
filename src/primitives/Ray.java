@@ -11,15 +11,16 @@ public class Ray {
         dir = v.normalize();
     }
 
-    public boolean equals(Object obj)
-    {
-        if (this==obj) return true;
-        if (obj == null) return false;
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        return (obj instanceof Ray other)
+                && this.p0.equals(other.p0)
+                && this.dir.equals(other.dir);
+        /*if (obj == null) return false;
         if (!(obj instanceof Point)) //if the object is not a point
             return false;
         Point other = (Point)obj;
-        return super.equals(other);
-
+        return super.equals(other);*/
     }
-
 }
