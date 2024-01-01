@@ -1,6 +1,7 @@
 package geometries;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 /**
@@ -11,8 +12,9 @@ public class Cylinder extends Tube {
 
     double height;
 
-    public Cylinder(double rad) {
-        super(rad);
+    public Cylinder(double rad, Ray r) {
+       super(rad, r);
+
     }
 
     @Override
@@ -23,10 +25,5 @@ public class Cylinder extends Tube {
     public String toString(){
         return String.format("Height: " + height);
     }
-    /*
-    public double getHeight() {
-        return height;
-    }
 
-     */
 }

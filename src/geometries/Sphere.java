@@ -10,8 +10,9 @@ public class Sphere extends RadialGeometry {
 
     Point center;
 
-    public Sphere(double rad) {
+    public Sphere(Point c, double rad) {
         super(rad);
+        center = c;
     }
 
     @Override

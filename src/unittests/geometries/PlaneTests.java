@@ -11,6 +11,9 @@ import geometries.Plane;
 import primitives.Point;
 import primitives.Vector;
 
+/***
+ * Unit test for Plane
+ */
 class PlaneTests {
 
     /**
