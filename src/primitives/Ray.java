@@ -18,6 +18,11 @@ public class Ray {
         direction = v.normalize();
     }
 
+    /***
+     *
+     * @param obj - an Object
+     * @return true if the object equals this ray, else return false
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;

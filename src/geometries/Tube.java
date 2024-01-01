@@ -16,11 +16,20 @@ public class Tube extends RadialGeometry {
         super(rad);
     }
 
+    /**
+     *
+     * @param p
+     * @return the normal at point p
+     */
     @Override
     public Vector getNormal(Point p) {
         return null;
     }
 
+    /**
+     *
+     * @return info of the tube in a string
+     */
     public String toString(){
         return String.format("Radius: " + radius);
     }

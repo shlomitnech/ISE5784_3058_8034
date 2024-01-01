@@ -79,6 +79,11 @@ public class Polygon implements Geometry { //original has EXTENDS
         }
     }
 
+    /**
+     *
+     * @param point
+     * @return the normal of the polygon
+     */
     @Override
     public Vector getNormal(Point point) { return plane.getNormal(); }
 

@@ -20,6 +20,10 @@ public class RadialGeometry implements Geometry{
         return null;
     }
 
+    /**
+     *
+     * @return the info of the radial geometry in a string
+     */
     public String toString(){
         return String.format("Radius: " + radius);
     }

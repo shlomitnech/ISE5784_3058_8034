@@ -10,15 +10,28 @@ public class Sphere extends RadialGeometry {
 
     Point center;
 
+    /**
+     *
+     * @param rad
+     */
     public Sphere(double rad) {
         super(rad);
     }
 
+    /**
+     *
+     * @param p
+     * @return the normal of the sphere with point p
+     */
     @Override
     public Vector getNormal(Point p) {
         return null;
     }
 
+    /**
+     *
+     * @return the info of the sphere as a string
+     */
     @Override
     public String toString(){
         return super.toString() + String.format("Center: " + center);

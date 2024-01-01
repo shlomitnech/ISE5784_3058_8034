@@ -30,12 +30,22 @@ public class Vector extends Point{
             throw new IllegalArgumentException("Vector is null");
         }
     }
+
+    /***
+     *
+     * @param obj - an object
+     * @return true if obj equals this vector else false
+     */
     @Override
     public boolean equals(Object obj) {
         if (this==obj) return true;
         return (obj instanceof Vector other) && this.xyz.equals(other.xyz);
     }
 
+    /***
+     *
+     * @return the info of the vector in a string
+     */
         @Override
     public String toString() {return "->" + super.toString();
     }

@@ -15,7 +15,11 @@ public class Point {
     }
 
 
-
+    /****
+     *
+     * @param obj - an object
+     * @return true if obj equals this point, else return false
+     */
     @Override
     public boolean equals(Object obj) {
         if (this==obj) return true;
@@ -23,6 +27,10 @@ public class Point {
                 && this.xyz.equals(other.xyz);
     }
 
+    /***
+     * no params
+     * @return a string depicting the point
+     */
     @Override
     public String toString() {return xyz.toString();}
 

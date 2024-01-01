@@ -11,7 +11,12 @@ public class Plane {
     private final Point q0;
     private final Vector normal;
 
-
+    /***
+     *
+     * @param p1
+     * @param p2
+     * @param p3
+     */
     public Plane( Point p1, Point p2, Point p3) {
         q0 = p1;
         normal = null; //change this to be normal at next stage!
@@ -48,6 +53,11 @@ public class Plane {
     public Vector getNormal(Point p){
         return normal;
     }
+
+    /***
+     *
+     * @return the info of the plane in a string
+     */
     public String toString(){
         return String.format("Point: " + q0 + ", Normal: " + normal);
     }
