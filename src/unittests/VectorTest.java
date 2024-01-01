@@ -56,7 +56,7 @@ class VectorTests {
         // ============ Equivalence Partitions Tests ==============
 
         // TC01: Test that the new vector is scaling correctly
-        assertEquals(v1.scale(2), new Vector(2, 3, 4), "ERROR: scale() not working");
+        assertEquals(v1.scale(2), new Vector(2, 4, 6), "ERROR: scale() not working");
 
         // =============== Boundary Values Tests ==================
 

@@ -13,8 +13,11 @@ public class Plane {
 
 
     public Plane( Point p1, Point p2, Point p3) {
-        q0 = p1;
-        normal = null; //change this to be normal at next stage!
+        Vector v1 = p2.subtract(p1);
+        Vector v2 = p3.subtract(p1);
+        normal = v1.crossProduct(v2).normalize();
+        q0 = p2;
+
     }
 
     public Plane(Point p1, Vector normalV) {
