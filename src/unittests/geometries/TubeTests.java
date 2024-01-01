@@ -45,26 +45,19 @@ class TubeTests {
 
     @Test
     void testGetNormal() {
-        // Test 1: Point on the body of the tube
-        assertDoesNotThrow(() -> {
-            Point p0 = new Point(3, 0, 0);
-            Point p1 = new Point(1, 1, 0);
-            Vector v = new Vector(2, 0, 0);
-            Ray r1 = new Ray(p0, v);
-            Tube t = new Tube(1.0, r1);
-            Vector ans1 = new Vector(0, 1, 0);
-            assertEquals(ans1, t.getNormal(p1), "Error: Tube Get Normal");
-        });
+        Tube t1 = new Tube(1.0, new Ray(new Point(1, 1, 1), new Vector(0, 1, 0)));
 
-        // Test 2: Point on the body of the tube with a 90-degree angle to the ray
-        assertDoesNotThrow(() -> {
-            Point p2 = new Point(2, 0, 0);
-            Point p3 = new Point(1, 0, 1);
-            Vector v1 = new Vector(1, 0, 0);
-            Ray r2 = new Ray(p2, v1);
-            Tube t1 = new Tube(1, r2);
-            Vector ans2 = new Vector(0, 0, 1);
-            assertEquals(ans2, t1.getNormal(p3), "Error: Tube Get Normal");
-        });
+        // ============ Equivalence Partitions Tests ==============
+        Vector e1 = t1.getNormal(new Point(1, 3, 2));
+        // Test 1 : Test that the normal is correct
+        assertEquals(new Vector(0, 0, 1), e1, "ERROR: getNormal() incorrect result");
+
+        // =============== Boundary Values Tests ==================
+        Vector b1 = t1.getNormal(new Point(1, 1, 2));
+
+        // Test 2: Test that getNormal works for normal that is perpendicular to the axis ray
+        assertEquals(new Vector(0, 0, 1), b1,
+                "ERROR: getNormal() with norm that is perpendicular to the axis ray");
     }
+
 }

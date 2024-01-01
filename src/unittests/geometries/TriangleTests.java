@@ -24,21 +24,22 @@ class TriangleTests {
     @Test
     void testGetNormal() {
         // ============ Equivalence Partitions Tests ==============
-        // TC01: There is a simple single test here - using 3 points
         Point p1 = new Point(0, 0, 1);
         Point p2 = new Point(1, 0, 0);
         Point p3 = new Point(0, 1, 0);
         Triangle tri = new Triangle(p1,p2,p3);
-        // ensure there are no exceptions
-        assertDoesNotThrow(() -> tri.getNormal(new Point(1, 1, 1)), "");
         // generate the test result
         Vector result = tri.getNormal(new Point(1, 1, 1));
-        // ensure |result| = 1
-        assertEquals(1, result.length(), 0.00000001, "Triangle's normal is not a unit vector");
-        // ensure the result is orthogonal to all the edges
-        //for (int i = 0; i < 3; ++i)
-        // assertTrue(isZero(result.dotProduct(pts[i].subtract(pts[i == 0 ? 3 : i - 1]))),
-        //          "Triangle's normal is not orthogonal to one of the edges");
+        assertEquals(1, result.length(), 0.00000001, "Triangle's normal is not the unit vector");
+
+        // check  that the normal in orthogonal to all the edges
+        assertTrue(isZero(tri.getNormal(new Point(0, 0, 1)).dotProduct(new Vector(0, 1, -1))),
+                "ERROR: normal is not orthogonal to the first edge");
+        assertTrue(isZero(tri.getNormal(new Point(0, 0, 1)).dotProduct(new Vector(1, -1, 0))),
+                "ERROR: normal is not orthogonal to the second edge");
+        assertTrue(isZero(tri.getNormal(new Point(0, 0, 1)).dotProduct(new Vector(-1, 0, 1))),
+                "ERROR:  normal is not orthogonal to the third edge");
+
     }
 
 }

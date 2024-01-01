@@ -20,14 +20,12 @@ class SphereTests {
      */
     @Test
     void testGetNormal() {
-        Point p = new Point(1,0,0);
-        Sphere sphere = new Sphere(p, 1);
-        // ensure there are no exceptions
-        assertDoesNotThrow(() -> sphere.getNormal(new Point(0, 0, 1)), "");
-        // generate the test result
-        Vector result = sphere.getNormal(new Point(0, 0, 1));
-        // ensure |result| = 1
-        assertEquals(1, result.length(), 0.00000001, "Sphere's normal is not a unit vector");
+        Sphere s1 = new Sphere(new Point(1, 2, 3), 1);
+        // ============ Equivalence Partitions Tests ==============
+        Vector e1 = s1.getNormal(new Point(3, 3, 3));
+        // TC01: Test that the normal is correct
+        assertEquals(new Vector(2, 1, 0), e1, "getNormal() wrong result");
+
     }
 
 }
