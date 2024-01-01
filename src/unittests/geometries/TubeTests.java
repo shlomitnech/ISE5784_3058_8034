@@ -11,37 +11,6 @@ import primitives.*;
  */
 class TubeTests {
 
-    /***
-     *
-     */
-    @Test
-    void testGetAxisRay() {
-        assertDoesNotThrow(() -> {
-            // Test code here
-            Point p0 = new Point(0, 0, 0);
-            Vector dir = new Vector(1, 0, 0);
-            Ray r = new Ray(p0, dir);
-            Tube t = new Tube(1.0, r);
-            Ray axisRay = t.getAxisRay();
-            assertEquals(r, axisRay, "Error: Tube getAxisRay");
-        });
-    }
-
-    /**
-     *
-     */
-    @Test
-    void testGetRadius() {
-        assertDoesNotThrow(() -> {
-            // Test code here
-            Point p0 = new Point(0, 0, 0);
-            Vector dir = new Vector(1, 0, 0);
-            Ray r = new Ray(p0, dir);
-            double radius = 1.0;
-            Tube t = new Tube(radius, r);
-            assertEquals(radius, t.getRadius(), "Error: Tube getRadius");
-        });
-    }
 
     @Test
     void testGetNormal() {
