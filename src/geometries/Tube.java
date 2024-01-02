@@ -10,7 +10,6 @@ import primitives.Vector;
 public class Tube extends RadialGeometry {
 
     Ray axisRay;
-    double radius;
 
     public Tube(double rad, Ray a) {
 
@@ -25,10 +24,14 @@ public class Tube extends RadialGeometry {
      */
     @Override
     public Vector getNormal(Point p) {
-        // Finding the nearest point to the given point that is on the axis ray
-        double distance = this.axisRay.getDirection().dotProduct(p.subtract(axisRay.getHead()));
-        Point hit = this.axisRay.getHead().add(axisRay.getDirection().scale(distance));
+        double distance = axisRay.getDirection().dotProduct(p.subtract(axisRay.getHead()));
+        Point hit;
+        if (distance != 0)
+            hit = axisRay.getHead().add(axisRay.getDirection().scale(distance));
+        else
+            hit = axisRay.getHead();
         return p.subtract(hit).normalize();
+
     }
 
     /**

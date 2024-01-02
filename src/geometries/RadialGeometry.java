@@ -8,6 +8,8 @@ public class RadialGeometry implements Geometry{
     protected double radius = 0;
 
     public RadialGeometry(double rad) {
+        if (rad <= 0)
+            throw new IllegalArgumentException("Radius must be greater than zero");
         radius = rad;
     }
 
