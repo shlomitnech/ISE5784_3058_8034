@@ -5,6 +5,7 @@ package unittests;
 
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.*;
+import static primitives.Util.isZero;
 
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +47,14 @@ class PointTests {
      */
     @Test
     void testDistanceSquared() {
-        //fail("Not yet implemented");
+        Point  p1 = new Point(1, 2, 3);
+        Point  p2 = new Point(2, 4, 6);
+        Point  p3 = new Point(2, 4, 5);
+        //check if the distance squared from a point to itself is 0
+        assertEquals(p1.distanceSquared(p1), 0.0, "ERROR: point squared distance to itself is not zero");
+        //check distance squared between points is correct
+        assertEquals(p1.distanceSquared(p3) - 9, 0.0, "ERROR: squared distance between points is wrong");
+        assertEquals(p3.distanceSquared(p1) - 9, 0.0, "ERROR: squared distance between points is wrong");
     }
 
     /**
@@ -54,7 +62,14 @@ class PointTests {
      */
     @Test
     void testDistance() {
-        //fail("Not yet implemented");
+        Point  p1 = new Point(1, 2, 3);
+        Point  p2 = new Point(2, 4, 6);
+        Point  p3 = new Point(2, 4, 5);
+        //check if the distance from a point to itself is 0
+        assertEquals(p1.distance(p1), 0.0, "ERROR: point distance to itself is not zero");
+        //check distance between points
+        assertEquals(p1.distance(p3) - 3, 0.0, "ERROR: distance between points to itself is wrong");
+        assertEquals(p3.distance(p1) - 3, 0.0, "ERROR: distance between points to itself is wrong");
     }
 
 }
