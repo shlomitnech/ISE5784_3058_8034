@@ -30,4 +30,13 @@ public class Ray {
                 && this.head.equals(other.head)
                 && this.direction.equals(other.direction);
     }
+
+    //Return the P0 point of ray
+    public Point getHead() {
+        return head;
+    }
+
+    public Vector getDirection() {
+        return direction;
+    }
 }

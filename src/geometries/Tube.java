@@ -12,8 +12,10 @@ public class Tube extends RadialGeometry {
     Ray axisRay;
     double radius;
 
-    public Tube(double rad) {
+    public Tube(double rad, Ray a) {
+
         super(rad);
+        axisRay = a;
     }
 
     /**
@@ -23,7 +25,10 @@ public class Tube extends RadialGeometry {
      */
     @Override
     public Vector getNormal(Point p) {
-        return null;
+        // Finding the nearest point to the given point that is on the axis ray
+        double distance = this.axisRay.getDirection().dotProduct(p.subtract(axisRay.getHead()));
+        Point hit = this.axisRay.getHead().add(axisRay.getDirection().scale(distance));
+        return p.subtract(hit).normalize();
     }
 
     /**
@@ -33,13 +38,12 @@ public class Tube extends RadialGeometry {
     public String toString(){
         return String.format("Radius: " + radius);
     }
-    /*
+
     public Ray getAxisRay() {
         return axisRay;
     }
     public double getRadius() {
         return radius;
     }
-    */
 
 }
