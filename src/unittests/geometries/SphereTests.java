@@ -20,11 +20,11 @@ class SphereTests {
      */
     @Test
     void testGetNormal() {
-        Sphere s1 = new Sphere(new Point(1, 2, 3), 1);
+        Sphere sphere1 = new Sphere(new Point(1, 2, 3), 1);
         // ============ Equivalence Partitions Tests ==============
-        Vector e1 = s1.getNormal(new Point(3, 3, 3));
+        Vector vec1 = sphere1.getNormal(new Point(2, 2, 3));
         // TC01: Test that the normal is correct
-        assertEquals(new Vector(2, 1, 0), e1, "getNormal() wrong result");
+        assertEquals(new Vector(1, 0, 0), vec1, "getNormal() wrong result");
 
     }
 

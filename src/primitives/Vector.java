@@ -90,7 +90,7 @@ public class Vector extends Point{
      * @return the length
      */
     public double length() {
-        return Math.sqrt(lengthSquared());
+        return Math.sqrt(this.lengthSquared());
     }
 
     /***
@@ -98,7 +98,8 @@ public class Vector extends Point{
      * @return the vector normalized
      */
     public Vector normalize() {
-        return new Vector(xyz.d1 / length(), xyz.d2 / length(), xyz.d3 / length());
+       // return new Vector(xyz.d1 / length(), xyz.d2 / length(), xyz.d3 / length());
+        return new Vector(xyz.reduce(this.length()));
     }
 
     /***
