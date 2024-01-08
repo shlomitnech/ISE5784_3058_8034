@@ -36,6 +36,13 @@ public class Ray {
         return head;
     }
 
+    /**
+     * @param t
+     * @return  //point of how and add how far away t is from starting point
+     */
+    public Point getPoint(double t) {
+        return (head.add(direction.scale(t)));
+    }
     public Vector getDirection() {
         return direction;
     }
