@@ -68,4 +68,8 @@ public class Point {
     public double distance(Point other) {
         return Math.sqrt(distanceSquared(other));
     }
+
+    public double getX() {
+        return Math.round(xyz.d1); // Assuming d1 is the x-coordinate
+    }
 }
