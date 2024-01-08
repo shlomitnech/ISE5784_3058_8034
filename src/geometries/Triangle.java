@@ -4,9 +4,9 @@ import primitives.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Class Triangle, inherits from Polygon and has three vertices
- * @author Shlomit and Jessica
+/*
+  Class Triangle, inherits from Polygon and has three vertices
+  @author Shlomit and Jessica
  */
 public class Triangle extends Polygon {
 
