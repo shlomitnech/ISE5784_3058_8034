@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import geometries.Polygon;
 import geometries.Triangle;
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
 
 /**
@@ -39,8 +40,8 @@ class TriangleTests {
                 "ERROR: normal is not orthogonal to the second edge");
         assertTrue(isZero(tri.getNormal(new Point(0, 0, 1)).dotProduct(new Vector(-1, 0, 1))),
                 "ERROR:  normal is not orthogonal to the third edge");
-    }
 
+    }
     /**
      * Test method for {@link geometries.Sphere#findIntersections(primitives.Ray)}.
      */
@@ -77,4 +78,6 @@ class TriangleTests {
 
 
     }
+
+
 }
