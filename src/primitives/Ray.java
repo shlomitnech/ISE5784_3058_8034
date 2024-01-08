@@ -39,6 +39,8 @@ public class Ray {
     /**
      * @param t
      * @return  //point of how and add how far away t is from starting point
+     * (The method calculates a point on the beam line, at a given
+     * distance from the beam’s head)
      */
     public Point getPoint(double t) {
         return (head.add(direction.scale(t)));
