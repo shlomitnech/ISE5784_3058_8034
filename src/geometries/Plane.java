@@ -1,7 +1,7 @@
 package geometries;
-
-import primitives.Point;
-import primitives.Vector;
+import java.util.ArrayList;
+import java.util.List;
+import primitives.*;
 
 /**
  * Plane Class implements the Geometry interface, represents a plane
@@ -77,5 +77,23 @@ public class Plane {
      */
     public String toString(){
         return String.format("Point: " + q0 + ", Normal: " + normal);
+    }
+
+    public List<Point> findIntersections(Ray ray) {
+        List<Point> intersections = new ArrayList<>();
+
+        double denominator = normal.dotProduct(ray.getDirection());
+
+        // Check if the ray and plane are not parallel
+        if (!Util.isZero(denominator)) {
+            double t = normal.dotProduct(getq0().subtract(ray.getHead())) / denominator;
+
+            // Check if the intersection is in front of the ray's starting point
+            if (t >= 0) {
+                Point p = ray.getPoint(t);
+                intersections.add(p);
+            }
+        }
+        return intersections.isEmpty() ? null : intersections;
     }
 }
