@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import geometries.Sphere;
 import primitives.*;
+
+import java.util.List;
+
 /**
  * Testing Sphere
  * @author jessica and Shlomit
@@ -25,12 +28,18 @@ class SphereTests {
         assertEquals(new Vector(1, 0, 0), vec1, "getNormal() wrong result");
 
     }
+
+    /***
+     *
+     */
     @Test
     public void testFindIntersections() {
         Sphere sphere = new Sphere(new Point(1, 0, 0),1d);
         // ============ Equivalence Partitions Tests ==============
         // TC01: Ray's line is outside the sphere (0 points)
-        assertNull("Ray's line out of sphere", sphere.findIntersections(new Ray(new Point(-1, 0, 0), new Vector(1, 1, 0))));
+        assertNull(sphere.findIntersections(new Ray(new Point(-1, 0, 0), new Vector(1, 1, 0))),"Ray's line out of sphere");
+
+
         // TC02: Ray starts before and crosses the sphere (2 points)
         Point p1 = new Point(0.0651530771650466, 0.355051025721682, 0);
         Point p2 = new Point(1.53484692283495, 0.844948974278318, 0);
@@ -63,13 +72,13 @@ class SphereTests {
             result3 = List.of(result3.get(1), result3.get(0));
         assertEquals(List.of(p3, p4), result3, "Wrong number of points");
 
-        // TC14: Ray starts at sphere and goes inside (1 points)
+        // TC14: Ray starts at sphere and goes inside (1 point)
         assertEquals(new Point(0,0,0),sphere.findIntersections(new Ray(new Point(2, 0, 0),new Vector(-1, 0, 0))).get(0),"Ray starts at spheres and go inside");
 
-        // TC15: Ray starts inside (1 points)
+        // TC15: Ray starts inside (1 point)
         assertEquals(new Point(0,0,0),sphere.findIntersections(new Ray(new Point(.5, 0, 0),new Vector(-1, 0, 0))).get(0),"Ray starts inside and goes out");
 
-        // TC16: Ray starts at the center (1 points)
+        // TC16: Ray starts at the center (1 point)
         assertEquals(new Point(1.5773502691896257,0.5773502691896258,0.5773502691896258),sphere.findIntersections(new Ray(new Point(1, 0, 0),new Vector(1, 1, 1))).get(0),"Ray starts at center ");
 
         // TC17: Ray starts at sphere and goes outside (0 points)
