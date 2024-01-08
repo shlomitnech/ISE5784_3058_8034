@@ -5,7 +5,7 @@ import primitives.*;
  * Interface that all the Geometries use
  * @author Shlomit and Jessica
  */
-public interface Geometry {
+public interface Geometry extends Intersectable {
 
     /***
      *

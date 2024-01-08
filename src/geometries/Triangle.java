@@ -20,11 +20,10 @@ public class Triangle extends Polygon {
         if (planeIntersections == null) {
             return null; // No intersection with the plane, so no intersection with the triangle
         }
-
         List<Point> intersections = new ArrayList<>();
 
         // Extract the intersection point from the plane
-        Point p = planeIntersections.get(0);
+        Point p = planeIntersections.getFirst();
 
         // Calculate barycentric coordinates
         Vector v0 = vertices.get(1).subtract(vertices.get(0));
@@ -39,18 +38,17 @@ public class Triangle extends Polygon {
 
         double denominator = dot00 * dot11 - dot01 * dot01;
 
-        if (denominator == 0) {
+        if (!Util.isZero(denominator)) {
             return null; // The triangle is degenerate
         }
 
         double u = (dot11 * dot02 - dot01 * dot12) / denominator;
         double v = (dot00 * dot12 - dot01 * dot02) / denominator;
 
+        // The intersection point is inside the triangle
         if (u >= 0 && v >= 0 && (u + v) <= 1) {
-            // The intersection point is inside the triangle
             intersections.add(p);
         }
-
         return intersections.isEmpty() ? null : intersections;
     }
 }
