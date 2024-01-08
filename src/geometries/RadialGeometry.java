@@ -1,7 +1,10 @@
 package geometries;
 
 import primitives.Point;
+import primitives.Ray;
 import primitives.Vector;
+
+import java.util.List;
 
 public class RadialGeometry implements Geometry{
 
@@ -31,4 +34,8 @@ public class RadialGeometry implements Geometry{
     }
 
 
+    @Override
+    public List<Point> findIntersections(Ray ray) {
+        return null;
+    }
 }

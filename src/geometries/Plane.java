@@ -83,8 +83,6 @@ public class Plane {
         List<Point> intersections = new ArrayList<>();
 
         double denominator = normal.dotProduct(ray.getDirection());
-
-        // Check if the ray and plane are not parallel
         if (!Util.isZero(denominator)) {
             double t = normal.dotProduct(getq0().subtract(ray.getHead())) / denominator;
 
