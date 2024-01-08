@@ -5,9 +5,9 @@ import primitives.*;
 import geometries.*;
 
 
-/**
- * Class Triangle, inherits from Polygon and has three vertices
- * @author Shlomit and Jessica
+/*
+  Class Triangle, inherits from Polygon and has three vertices
+  @author Shlomit and Jessica
  */
 public class Triangle extends Polygon {
 
