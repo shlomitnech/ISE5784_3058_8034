@@ -7,7 +7,7 @@ import primitives.*;
  * Plane Class implements the Geometry interface, represents a plane
  * @author Shlomit and Jessica
  */
-public class Plane {
+public class Plane implements Geometry{
     private final Point q0;
     private final Vector normal;
 

@@ -11,6 +11,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 /**
  * Testing Triangles
  * @author jessi
@@ -55,7 +57,7 @@ class TriangleTests {
         Point p0 = new Point(2,2,2);
         // ============ Equivalence Partitions Tests ==============
         //Test 01: Intersection point contained on plane is in triangle
-        assertEquals(new Point(3,1,0),tri.findIntersections(new Ray(p0,new Vector(1, -1, -2))).get(0),"Intersection of is in the triangle");
+        assertEquals(new Point(3,1,0),tri.findIntersections(new Ray(p0,new Vector(1, -1, -2))).getFirst(),"Intersection of is in the triangle");
 
         //Test 02: Point contained on plane is outside triangle next to an edge
         assertNull(tri.findIntersections(new Ray(p0,new Vector(-2, -0.5, -2))),"No intersection (outside edge of triangle)");
@@ -67,10 +69,10 @@ class TriangleTests {
         // ============ Boundary Value Analysis ==============
 
         //Test 11: Point on plane is on one of the sides
-        assertEquals(new Point(2,1,0),tri.findIntersections(new Ray(p0,new Vector(0, -1, -2))).get(0),"No intersection (on the side of triangle");
+        assertEquals(new Point(2,1,0),tri.findIntersections(new Ray(p0,new Vector(0, -1, -2))).getFirst(),"No intersection (on the side of triangle");
 
         //Test 12: Point on plane is on a vertex
-        assertEquals(new Point(3,2,0),tri.findIntersections(new Ray(p0,new Vector(1, 0, -2))).get(0),"No intersection (on the edge of triangle");
+        assertEquals(new Point(3,2,0),tri.findIntersections(new Ray(p0,new Vector(1, 0, -2))).getFirst(),"No intersection (on the edge of triangle");
 
 
         //Test 13: Point on plane is on continuation of side

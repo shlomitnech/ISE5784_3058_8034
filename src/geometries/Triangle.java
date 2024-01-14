@@ -38,7 +38,7 @@ public class Triangle extends Polygon {
 
         double denominator = dot00 * dot11 - dot01 * dot01;
 
-        if (!Util.isZero(denominator)) {
+        if (Util.isZero(denominator)) {
             return null; // The triangle is degenerate
         }
 
