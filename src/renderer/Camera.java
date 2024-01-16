@@ -3,9 +3,10 @@ package renderer;
 import primitives.*;
 
 import java.util.MissingResourceException;
+import java.lang.Cloneable;
 
 
-public class Camera {
+public class Camera implements java.lang.Cloneable  {
 
     Point p0;
     Vector vUp;
@@ -19,6 +20,11 @@ public class Camera {
         width = 0;
         height = 0;
         distance = 0;
+    }
+
+    public Object clone() throws CloneNotSupportedException
+    {
+        return super.clone();
     }
 
     /**
@@ -139,11 +145,12 @@ public class Camera {
             return this;
         }
 
+
         /***
          * check for all relevant camera field that have a non-zero value
          * @return
          */
-        public Camera build(){
+        public Camera build() throws CloneNotSupportedException {
             if(camera.width == 0)
                 throw new MissingResourceException("Value is zero","Camera","width");
             if(camera.height == 0)

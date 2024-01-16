@@ -20,11 +20,11 @@ class IntegrationTests {
     //????????????????????????????????????????????????????????????????????????
     final Point ZERO = new Point(0,0,0);
     private void checkSphereIntersections(Camera c, Sphere g, int intersections, String assertMessage) {
-        c.setViewPlaneSize(3,3).setDistance(1);
+        c.Builder.setVpSize(3,3).setDistance(1);
         int count = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                Ray r = c.constructRayThroughPixel(3, 3, j, i);
+                Ray r = c.constructRay(3, 3, j, i);
                 if (g.findIntersections(r) != null) {
                     count += g.findIntersections(r).size();
                 }
@@ -33,7 +33,7 @@ class IntegrationTests {
         assertEquals(intersections, count, assertMessage);
     }
     private void checkPlaneIntersections(Camera c, Plane g, int intersections, String assertMessage) {
-        c.setViewPlaneSize(3,3).setDistance(1);
+        c.Builder.setVpSize(3,3).setDistance(1);
         int count = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -46,7 +46,7 @@ class IntegrationTests {
         assertEquals(intersections, count, assertMessage);
     }
     private void checkTriIntersections(Camera c, Triangle g, int intersections, String assertMessage) {
-        c.setViewPlaneSize(3,3).setDistance(1);
+        c.Builder.setVpSize(3,3).setDistance(1);
         int count = 0;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -65,7 +65,8 @@ class IntegrationTests {
         Vector vUp = new Vector(0,1,0);
         //TC:01 unit sphere in the center of view plane
         Sphere s1 = new Sphere(new Point(0, 0, -3),1d);
-        Camera c1 = new Camera(ZERO,vTo,vUp).setViewPlaneSize(3, 3).setDistance(1);
+        Camera c1 = cameraBuilder.setVpSize(3, 3).build();
+        //Camera c1 = new Camera(ZERO,vTo,vUp).setViewPlaneSize(3, 3).setDistance(1);
         checkSphereIntersections(c1, s1,2, "ERROR Sphere: Expected 2 points");
 
         //TC:02 Sphere larger than view plane - 18 intersection points
