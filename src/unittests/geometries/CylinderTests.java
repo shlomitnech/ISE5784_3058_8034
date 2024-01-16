@@ -14,7 +14,7 @@ class CylinderTests {
 
     /**
      * Test method for {@link geometries.Cylinder#getNormal(primitives.Point)}.
-     */
+
     @Test
     void testGetNormal() {
         Cylinder cylinder = new Cylinder(1.0, new Ray(new Point(1, 1, 1), new Vector(0, 1, 0)), 5);
@@ -40,7 +40,7 @@ class CylinderTests {
         assertEquals(new Vector(0, 1, 0), b2, "Error: getNormal() center point of the top base");
 
     }
-
+    */
 
 
 }

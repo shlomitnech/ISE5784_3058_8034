@@ -18,9 +18,10 @@ public class Cylinder extends Tube {
            throw new IllegalArgumentException("Height must be greater than 0");
        height = h;
     }
-
+  /*
     @Override
     public Vector getNormal(Point p) {
+
         Vector direction = axisRay.getDirection().normalize();
         Point head = axisRay.getHead();
         // Check that surface point is diff than head of axisRay to avoid creating a zero vector
@@ -33,7 +34,7 @@ public class Cylinder extends Tube {
         // If surface point is on the side of the cylinder
         return super.getNormal(p);
     }
-
+*/
 
     public String toString(){
         return String.format("Height: " + height);
