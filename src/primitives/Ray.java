@@ -1,5 +1,9 @@
 package primitives;
 
+import java.util.List;
+
+import static java.lang.Double.MAX_VALUE;
+
 /**
  * Class Ray, contains a point head and direction vector
  * @author Shlomit and Jessica
@@ -48,5 +52,25 @@ public class Ray {
         return direction;
     }
 
+    /**
+     * Finds the closest point
+     * @param points //collection of points
+     * @return closest point to ray's head
+     */
+    public Point findClosestPoint(List<Point> points ) {
+        double closestDistance = MAX_VALUE;
+        if (points.isEmpty())
+                return null;
+        //If there are values in the points list
+        Point closestPoint = points.getFirst(); //set the first point
+        for (Point p : points){
+            if (p.distance(this.head) < closestDistance) { //closer than previous points
+                closestDistance = p.distance((this.head));
+                closestPoint = p;
+            }
+        }
+        return closestPoint;
+
+    }
 }
 

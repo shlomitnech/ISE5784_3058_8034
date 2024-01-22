@@ -1,7 +1,11 @@
 package renderer;
 //import geometries.*;
 import primitives.*;
+import primitives.Point;
+import static primitives.Util.isZero;
 
+
+import java.awt.*;
 import java.util.MissingResourceException;
 import java.lang.Cloneable;
 
@@ -16,7 +20,7 @@ public class Camera implements java.lang.Cloneable  {
     double height;
     double distance;
 
-    private ImageWriter imageWriter;
+    private static ImageWriter imageWriter;
     private RayTraceBase rayTracer; //should this be changed
 
 
@@ -60,26 +64,22 @@ public class Camera implements java.lang.Cloneable  {
 
 
     public Ray constructRay(int nX, int nY, int j, int i) {
-        //image center
-        Point Pc = this.p0.add(vTo.scale(distance));
+       //find the center of the view plane
+        Point pIJ = p0.add(vTo.scale(distance));
 
-        //ratio
-        double Ry = height/nY;
-        double Rx = width/nX;
+        //Find the offset on the view plane
+        // height/nY = ratio on Y axis
+        // width/nX = ratio on X axis
+        double offsetY = (-(i-(nY - 1) / 2.0)) * (height / nY);
+        double offsetX = (((nX - 1) / 2.0)-j) * (width / nX);
 
-        //if xj and yi equal zero we will get in error
-        //therefore we want to work around this as it is not incorrect
-        double yI = -(i-((double) (nY - 1) /2))*Ry;
-        double xJ = (j-((double) (nX - 1) /2))*Rx;
+        // Apply the offsets to the view plane to get the final point
+        if (!isZero(offsetX))
+            pIJ = pIJ.add(vRight.scale(offsetX));
+        if (!isZero(offsetY))
+            pIJ = pIJ.add(vUp.scale(offsetY));
+        return new Ray(p0, pIJ.subtract(p0));
 
-        Point Pij = Pc;
-        if (xJ != 0) Pij = Pij.add(vRight.scale(xJ));
-        if (yI != 0) Pij = Pij.add(vUp.scale(yI));
-
-        Vector Vij = Pij.subtract(p0);
-        Ray ray = new Ray(p0,Vij);
-
-        return ray;
 
     }
     public static Builder getBuilder(){
@@ -116,7 +116,7 @@ public class Camera implements java.lang.Cloneable  {
          * @param vTo
          * @return builder
          */
-        public Builder setDirection(Vector vUp, Vector vTo){
+        public Builder setDirection(Vector vTo, Vector vUp){
             if(vUp.dotProduct(vTo) != 0) { //check that VTo and vUp are perpendicular
                 throw new IllegalArgumentException("Error: Vto and Vup are not perpedicular");
             }
@@ -150,7 +150,7 @@ public class Camera implements java.lang.Cloneable  {
         }
 
         /**
-         *
+         * set the Ray tracer from simpleRayTracer
          * @param test
          * @return
          */
@@ -159,8 +159,9 @@ public class Camera implements java.lang.Cloneable  {
             return this;
         }
 
-        public Builder setImageWriter(){
-            
+        public Builder setImageWriter(ImageWriter w){
+            imageWriter = w;
+            return this;
         }
 
         /***

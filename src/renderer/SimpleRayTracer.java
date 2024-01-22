@@ -2,10 +2,17 @@ package renderer;
 
 import primitives.*;
 import geometries.*;
-import elements.*;
+import lighting.*;
+import scene.*;
+
 import java.util.List;
 
 public class SimpleRayTracer extends RayTraceBase {
+
+    public SimpleRayTracer(Scene s) {
+        super(s);
+    }
+
     /***
      *
      */
