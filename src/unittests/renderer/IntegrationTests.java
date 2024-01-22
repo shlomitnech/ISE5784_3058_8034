@@ -22,7 +22,7 @@ class IntegrationTests {
             .setImageWriter(new ImageWriter("Test", 1, 1))
             .setLocation(Point.ZERO)
             .setDirection(new Vector(0, 0, -1), new Vector(0, 1, 0)) //vTo, vUp
-            .setVpDistance(10);
+            .setVpDistance(1);
 
     final Point ZERO = new Point(0,0,0);
 
@@ -71,7 +71,7 @@ class IntegrationTests {
     @Test
         //CameraSphereIntersections
     void testCameraSphere() throws CloneNotSupportedException {
-        Camera c1 = cameraBuilder.setVpSize(3, 3).build();
+        Camera c1 = cameraBuilder.setVpSize(3, 3).setLocation(new Point(0,0,0.5)).build();
 
 
         //TC:01 unit sphere in the center of view plane
