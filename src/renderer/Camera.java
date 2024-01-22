@@ -9,7 +9,9 @@ import java.awt.*;
 import java.util.MissingResourceException;
 import java.lang.Cloneable;
 
-
+/**
+ * class camera
+ */
 public class Camera implements java.lang.Cloneable  {
 
     Point p0;
@@ -23,13 +25,20 @@ public class Camera implements java.lang.Cloneable  {
     private static ImageWriter imageWriter;
     private RayTraceBase rayTracer; //should this be changed
 
-
+    /**
+     * empty constructor for camera
+     */
     public Camera() {
         width = 0;
         height = 0;
         distance = 0;
     }
 
+    /**
+     * Clone method
+     * @return cloned Object
+     * @throws CloneNotSupportedException
+     */
     public Object clone() throws CloneNotSupportedException
     {
         return super.clone();
@@ -62,7 +71,14 @@ public class Camera implements java.lang.Cloneable  {
         return vRight;
     }
 
-
+    /**
+     * method to construct ray through pixel in a view plane
+     * @param nX
+     * @param nY
+     * @param j
+     * @param i
+     * @return the constructed ray
+     */
     public Ray constructRay(int nX, int nY, int j, int i) {
        //find the center of the view plane
         Point pIJ = p0.add(vTo.scale(distance));
@@ -84,6 +100,11 @@ public class Camera implements java.lang.Cloneable  {
 
 
     }
+
+    /**
+     * builder method
+     * @return a new builder
+     */
     public static Builder getBuilder(){
         return new Builder();
     }
@@ -161,6 +182,11 @@ public class Camera implements java.lang.Cloneable  {
             return this;
         }
 
+        /**
+         * set image writer
+         * @param w
+         * @return this (Builder)
+         */
         public Builder setImageWriter(ImageWriter w){
             imageWriter = w;
             return this;
@@ -168,7 +194,7 @@ public class Camera implements java.lang.Cloneable  {
 
         /***
          * check for all relevant camera field that have a non-zero value
-         * @return
+         * @return the camera
          */
         public Camera build() throws CloneNotSupportedException {
             if(camera.width == 0)

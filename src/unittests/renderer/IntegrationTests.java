@@ -13,7 +13,7 @@ import scene.Scene;
 
 /**
  * @author jessica and Shlomit
- *
+ * test integration of camera and geometries
  */
 class IntegrationTests {
         /** Camera builder for the tests */
@@ -26,7 +26,15 @@ class IntegrationTests {
 
     final Point ZERO = new Point(0,0,0);
 
-
+    /**
+     * check intersections between camera and the sphere geometry
+     * (count intersections in the view plane)
+     * @param c camera
+     * @param g sphere
+     * @param intersections
+     * @param assertMessage
+     * @throws CloneNotSupportedException
+     */
     private void checkSphereIntersections(Camera c, Sphere g, int intersections, String assertMessage) throws CloneNotSupportedException {
 //       Camera c = cameraBuilder.setVpSize(3,3).setDistance(1);
         //Camera c = cameraBuilder.setVpSize(3, 3).build();
@@ -42,6 +50,15 @@ class IntegrationTests {
         }
         assertEquals(intersections, count, assertMessage);
     }
+
+    /**
+     * check intersections between camera and a plane
+     * (count intersections in the view plane)
+     * @param c camera
+     * @param g plane
+     * @param intersections
+     * @param assertMessage
+     */
     private void checkPlaneIntersections(Camera c, Plane g, int intersections, String assertMessage) {
        // c.Builder.setVpSize(3,3).setDistance(1);
         int count = 0;
@@ -55,6 +72,15 @@ class IntegrationTests {
         }
         assertEquals(intersections, count, assertMessage);
     }
+
+    /**
+     * check intersections between camera and the triangle geometry
+     * (count intersections in the view plane)
+     * @param c camera
+     * @param g triangle
+     * @param intersections
+     * @param assertMessage
+     */
     private void checkTriIntersections(Camera c, Triangle g, int intersections, String assertMessage) {
        // c.Builder.setVpSize(3,3).setDistance(1);
         int count = 0;
@@ -68,6 +94,11 @@ class IntegrationTests {
         }
         assertEquals(intersections, count, assertMessage);
     }
+
+    /**
+     * test the camera sphere intersections in the different cases
+     * @throws CloneNotSupportedException
+     */
     @Test
         //CameraSphereIntersections
     void testCameraSphere() throws CloneNotSupportedException {
@@ -98,6 +129,11 @@ class IntegrationTests {
         checkSphereIntersections(c1, s5,0, "ERROR Sphere: Expected 0 points");
 
     }
+
+    /**
+     * test the different cases of camera plane intersections
+     * @throws CloneNotSupportedException
+     */
     @Test
         //CameraPlaneIntersections
 
@@ -122,6 +158,10 @@ class IntegrationTests {
 
     }
 
+    /**
+     * test different cases of camera triangle intersections
+     * @throws CloneNotSupportedException
+     */
     @Test
         //CameraTriangleIntersections
     void testCameraTriangle() throws CloneNotSupportedException {
