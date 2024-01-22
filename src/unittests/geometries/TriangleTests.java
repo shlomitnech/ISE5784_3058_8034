@@ -66,7 +66,6 @@ class TriangleTests {
         // Test 03: Point contained on plane is outside triangle next to a vertex
         assertNull(tri.findIntersections(new Ray(p0, new Vector(-1.5, -2, -2))), "No intersection (outside vertex of triangle");
 
-
         // ============ Boundary Value Analysis ==============
 
         // Test 11: Point on plane is on one of the sides
