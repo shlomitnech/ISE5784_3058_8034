@@ -9,7 +9,6 @@ public class Ray {
     public Vector direction;
 
     /**
-     *
      * @param p
      * @param v
      */
