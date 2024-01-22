@@ -16,6 +16,10 @@ public class Camera implements java.lang.Cloneable  {
     double height;
     double distance;
 
+    private ImageWriter imageWriter;
+    private RayTraceBase rayTracer; //should this be changed
+
+
     public Camera() {
         width = 0;
         height = 0;
@@ -82,6 +86,7 @@ public class Camera implements java.lang.Cloneable  {
         return new Builder();
     }
 
+
     /**
      * Nested Builder class - design pattern in Camera
      */
@@ -90,7 +95,6 @@ public class Camera implements java.lang.Cloneable  {
 
         /***
          * Constructor for Camera in Builder
-         * @param camera
          */
         public Builder() {
             this.camera = new Camera();
@@ -145,6 +149,19 @@ public class Camera implements java.lang.Cloneable  {
             return this;
         }
 
+        /**
+         *
+         * @param test
+         * @return
+         */
+        public Builder setRayTracer(SimpleRayTracer test) {
+            this.camera.rayTracer=test;
+            return this;
+        }
+
+        public Builder setImageWriter(){
+            
+        }
 
         /***
          * check for all relevant camera field that have a non-zero value
@@ -164,6 +181,8 @@ public class Camera implements java.lang.Cloneable  {
             //add the rest of the value checks
             return (Camera) camera.clone();
         }
+
+
     }
 
 }

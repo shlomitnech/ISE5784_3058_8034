@@ -37,7 +37,7 @@ public class Geometries implements Intersectable {
         for (Intersectable geo : geometries) {
             toAdd = geo.findIntersections(ray);
             if (toAdd != null) {
-                if(result==null) {
+                if(result==null) { // checks if this is the first point on my list
                     result = new LinkedList<>();
                 }
                 result.addAll(toAdd);
