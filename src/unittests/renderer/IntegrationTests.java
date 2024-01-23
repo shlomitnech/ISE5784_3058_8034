@@ -31,7 +31,7 @@ class IntegrationTests {
      * @param c camera
      * @param g Geometry
      * @param intersections
-     * @param assertMessage
+     * @param assertMessage to throw if error
      */
     private void checkGeoIntersections(Camera c, Geometry g, int intersections, String assertMessage) throws CloneNotSupportedException {
         int count = 0;
@@ -62,7 +62,6 @@ class IntegrationTests {
 
         //TC:02 Sphere larger than view plane - 18 intersection points
         Sphere s2 = new Sphere(new Point(0, 0, -2.5),2.5d);
-        Point p2 = new Point (0,0,0.5);
         checkGeoIntersections(c1, s2,18, "ERROR Sphere: Expected 18 points");
 
         //TC03: Sphere closer to intersecting view plane - 10 points
@@ -71,12 +70,10 @@ class IntegrationTests {
 
         //TC04: Sphere with view plane in middle of it - 9 points
         Sphere s4 = new Sphere(new Point(0, 0, -2),4d);
-        Point p4 = new Point (0,0,-2);
         checkGeoIntersections(c1, s4,9, "ERROR Sphere: Expected 10 points");
 
         //TC05: Sphere with view plane in middle of it - 0 points
         Sphere s5 = new Sphere(new Point(0, 0, 1),0.5d);
-        Point p5 = new Point (0,0,-1);
         checkGeoIntersections(c1, s5,0, "ERROR Sphere: Expected 0 points");
 
     }
