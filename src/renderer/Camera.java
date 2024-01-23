@@ -103,34 +103,30 @@ public class Camera implements java.lang.Cloneable  {
 
     }
 
-    public Camera renderImage(){ //changed from return void
+    public void renderImage(){ //changed from return void
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
-        for (int i = 0; i < imageWriter.getNy(); i++) {
-            for (int j = 0; j < imageWriter.getNx(); j++) {
 
-                Ray r = this.constructRay(imageWriter.getNx(), imageWriter.getNx(), j, i); //construct ray through pixel
-                primitives.Color c = this.rayTracer.traceRay(r); //color at point intersected by ray
-                this.imageWriter.writePixel(j, i, c); //coloring that pixel
-            }
-        }
-        return this;
+        int nY = imageWriter.getNy();
+        int nX = imageWriter.getNx();
+
+        for (int i = 0; i < nY; ++i)
+            for (int j = 0; j < nX; j++)
+                imageWriter.writePixel(j, i, castRay(j, i));
     }
 
-    public Camera printGrid(int interval, Color color){ //changed from return void
+    public void printGrid(int interval, Color color){ //changed from return void
         if(imageWriter == null) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
-        for (int i = 0; i < imageWriter.getNy(); i++) {
-            for (int j = 0; j < imageWriter.getNx(); j++) {
-                if (((i % interval) == 0) || ((j % interval) == 0)) { //grid lines - need to add if so no grid on shape
-                    //need another check here to not overwrite picture
-                    imageWriter.writePixel(j, i, color);
-                }
-            }
-        }
-        return this;
+        for (int i = 0; i < imageWriter.getNy(); i += interval)
+            for (int j = 0; j < imageWriter.getNx(); j += 1)
+                imageWriter.writePixel(i, j, color);
+        for (int i = 0; i < imageWriter.getNy(); i += 1)
+            for (int j = 0; j < imageWriter.getNx(); j += interval)
+                imageWriter.writePixel(i, j, color);
+
     }
 
     public void writeToImage() {
@@ -144,8 +140,8 @@ public class Camera implements java.lang.Cloneable  {
      * receives the resolution and the pixel number
      *
      */
-    private void castRay(int j, int i) {
-        rayTracer.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
+    private Color castRay(int j, int i) {
+        return rayTracer.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
     }
 
     /**
