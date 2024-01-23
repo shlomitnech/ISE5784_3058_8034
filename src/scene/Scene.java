@@ -8,6 +8,10 @@ import primitives.Color;
 
 import java.awt.*;
 
+/**
+ * Scene class
+ * Plain Data Structure - access to all its attributes are public
+ */
 public class Scene {
 
     public final String name;

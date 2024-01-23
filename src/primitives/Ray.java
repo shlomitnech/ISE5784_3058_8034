@@ -61,6 +61,7 @@ public class Ray {
         double closestDistance = MAX_VALUE;
         if (points.isEmpty())
                 return null;
+
         //If there are values in the points list
         Point closestPoint = points.getFirst(); //set the first point
         for (Point p : points){
