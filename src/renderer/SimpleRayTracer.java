@@ -24,8 +24,8 @@ public class SimpleRayTracer extends RayTraceBase {
 
     /***
      * Get the color from ambient light and intensity
-     * @param p
-     * @return
+     * @param p point
+     * @returns color
      */
     private Color calcColor(Point p) {
         return this.scene.ambientLight.getIntensity();
