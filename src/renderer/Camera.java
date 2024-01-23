@@ -103,32 +103,44 @@ public class Camera implements java.lang.Cloneable  {
 
     }
 
+    /**
+     * casts a ray through every pixel of image writer and colors that pixel
+     */
     public void renderImage(){ //changed from return void
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
-
         int nY = imageWriter.getNy();
         int nX = imageWriter.getNx();
 
         for (int i = 0; i < nY; ++i)
             for (int j = 0; j < nX; j++)
-                imageWriter.writePixel(j, i, castRay(j, i));
+                imageWriter.writePixel(j, i, castRay(j, i)); //check if intersection of geometries at each pixel
     }
 
+    /**
+     * prints the grid over the image at the interval of pixels
+     * @param interval = space between pixels
+     * @param color = color of grid
+     */
     public void printGrid(int interval, Color color){ //changed from return void
         if(imageWriter == null) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
+        //vertical lines
         for (int i = 0; i < imageWriter.getNy(); i += interval)
-            for (int j = 0; j < imageWriter.getNx(); j += 1)
+            for (int j = 0; j < imageWriter.getNx(); j += 1) //go through all the pixels in that line
                 imageWriter.writePixel(i, j, color);
+        //horizontal lines
         for (int i = 0; i < imageWriter.getNy(); i += 1)
             for (int j = 0; j < imageWriter.getNx(); j += interval)
                 imageWriter.writePixel(i, j, color);
 
     }
 
+    /**
+     * delegates to imagewriter to write the pixels to the final image
+     */
     public void writeToImage() {
         if(imageWriter == null) {
             throw new IllegalArgumentException("MissingResourcesException");
