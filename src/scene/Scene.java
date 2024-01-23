@@ -31,7 +31,7 @@ public class Scene {
      * @param c
      * @return
      */
-    public Scene setBackgroundColor( Color c) {
+    public Scene setBackground( Color c) {
         this.background = c;
         return this;
     }
@@ -44,6 +44,11 @@ public class Scene {
      */
     public Scene setAmbientLight(Color color, double ka) {
         this.ambientLight = new AmbientLight(color, ka);
+        return this;
+    }
+
+    public Scene setAmbientLight(AmbientLight amb) {
+        this.ambientLight = amb;
         return this;
     }
     /**

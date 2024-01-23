@@ -101,6 +101,19 @@ public class Camera implements java.lang.Cloneable  {
 
     }
 
+    public void renderImage(){
+        //loop through the view plane's pixels and for each pixel construct ray using case ray method
+        throw new UnsupportedOperationException();
+    }
+
+    public void printGrid(int interval, Color color){
+
+    }
+
+    public void writeToImage(){
+        //delegate approp message of imageWriter
+    }
+
     /**
      * builder method
      * @return a new builder
@@ -178,6 +191,9 @@ public class Camera implements java.lang.Cloneable  {
          * @return
          */
         public Builder setRayTracer(SimpleRayTracer test) {
+            if(test.scene.ambientLight == 0){
+                throw new MissingResourceException("Ray tracer is empty", "RayTracer", "Value");
+            }
             this.camera.rayTracer=test;
             return this;
         }
