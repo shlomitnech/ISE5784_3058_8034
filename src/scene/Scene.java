@@ -7,6 +7,8 @@ import primitives.Color;
 
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Scene class
@@ -18,6 +20,17 @@ public class Scene {
     public Color background = Color.BLACK;
     public AmbientLight ambientLight = AmbientLight.NONE;
     public Geometries geometries = new Geometries();
+    public List<LightSource> lights = new LinkedList<>();
+
+    /**
+     * set the lights in Scene
+     * @param lights
+     * @return
+     */
+    public Scene setLights(List<LightSource> lights) {
+        this.lights = lights;
+        return this;
+    }
 
     /***
      * Constructor for Scene's name

@@ -4,7 +4,7 @@ import primitives.*;
 
 public class SpotLight extends PointLight {
 
-    Vector direction;
+    private final Vector direction;
 
     public SpotLight(Color intensity, Point position, double Kc, double Kl, double Kq, Vector direction) {
         super(intensity, position, Kc, Kl, Kq);
@@ -18,8 +18,9 @@ public class SpotLight extends PointLight {
 
     @Override
     public Color getIntensity(Point p) {
-        return (super.getIntensity().scale(Math.max(0, direction.dotProduct(super.getL(p))))).reduce(getReduction(p));
+        return (super.getIntensity().scale(Math.max(0, direction.dotProduct(super.getL(p))))).reduce((int)getReduction(p));
     }
+
 
 }
 

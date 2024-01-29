@@ -35,7 +35,7 @@ public class PointLight extends Light implements LightSource{
      * @param d
      * @return
      */
-    public PointLight setkC(double d) {
+    public PointLight setKc(double d) {
         this.kC = d;
         return this;
     }
@@ -45,7 +45,7 @@ public class PointLight extends Light implements LightSource{
      * @param d
      * @return
      */
-    public PointLight setkL(double d) {
+    public PointLight setKl(double d) {
         this.kL = d;
         return this;
     }
@@ -55,7 +55,7 @@ public class PointLight extends Light implements LightSource{
      * @param d
      * @return
      */
-    public PointLight setkQ(double d) {
+    public PointLight setKq(double d) {
         this.kQ = d;
         return this;
     }
@@ -76,5 +76,13 @@ public class PointLight extends Light implements LightSource{
         return p.subtract(position).normalize();
     }
 
+
+    public LightSource setNarrowBeam(int i) {
+        return this;
+    }
+    protected double getReduction(Point p) {
+        double dSquare = position.distanceSquared(p);
+        return (kC + kL * Math.sqrt(dSquare) + kQ * dSquare);
+    }
 
 }
