@@ -41,24 +41,27 @@ public class Sphere extends RadialGeometry {
     /**
      * Method to find the intersections of a sphere
      */
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = new ArrayList<>();
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+
+        List<GeoPoint> intersections = new ArrayList<>();
         Vector u = this.center.subtract(ray.getHead());
         double tm = ray.getDirection().dotProduct(u);
         double d = Math.sqrt(u.dotProduct(u) - tm * tm);
 
         if (d > radius) {
             return null; // No intersections
-        } else {
+        }
+        else
+        {
             double th = Math.sqrt(radius * radius - d * d);
             double t1 = tm - th;
             double t2 = tm + th;
 
             if (t1 > 0) {
-                intersections.add(ray.getPoint(t1));
+                intersections.add(new GeoPoint(this, ray.getPoint(t1)));
             }
             if (t2 > 0 && t2 != t1) {
-                intersections.add(ray.getPoint(t2));
+                intersections.add(new GeoPoint(this,ray.getPoint(t2)));
             }
             if (intersections.isEmpty()) {
                 return null;
@@ -66,5 +69,6 @@ public class Sphere extends RadialGeometry {
             return intersections;
         }
     }
+
 
 }

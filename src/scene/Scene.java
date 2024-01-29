@@ -39,7 +39,7 @@ public class Scene {
     /**
      * sets the Ambient light to the color and scale given
      * @param color
-     * @param ka
+     * @param ka opacity
      * @return
      */
     public Scene setAmbientLight(Color color, double ka) {

@@ -6,7 +6,7 @@ import primitives.Vector;
 
 import java.util.List;
 
-public class RadialGeometry implements Geometry{
+public abstract class RadialGeometry extends Geometry{
 
     protected double radius = 0;
 
@@ -35,7 +35,7 @@ public class RadialGeometry implements Geometry{
 
 
     @Override
-    public List<Point> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         return null;
     }
 }

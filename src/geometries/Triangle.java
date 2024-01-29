@@ -14,13 +14,13 @@ public class Triangle extends Polygon {
         super(p1,p2,p3);
     }
 
-    public List<Point> findIntersections(Ray ray) {
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         // Find the intersection point with the triangle's plane
         List<Point> planeIntersections = this.plane.findIntersections(ray);
         if (planeIntersections == null) {
             return null; // No intersection with the plane, so no intersection with the triangle
         }
-        List<Point> intersections = new ArrayList<>();
+        List<GeoPoint> intersections = new ArrayList<>();
 
         // Extract the intersection point from the plane
         Point p = planeIntersections.getFirst();
@@ -47,7 +47,7 @@ public class Triangle extends Polygon {
 
         // The intersection point is inside the triangle
         if (u >= 0 && v >= 0 && (u + v) <= 1) {
-            intersections.add(p);
+            intersections.add(new GeoPoint(this, p));
         }
         return intersections.isEmpty() ? null : intersections;
     }

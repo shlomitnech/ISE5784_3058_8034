@@ -1,13 +1,16 @@
 package geometries;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import primitives.*;
+
+import static primitives.Util.isZero;
 
 /**
  * Plane Class implements the Geometry interface, represents a plane
  * @author Shlomit and Jessica
  */
-public class Plane implements Geometry{
+public class Plane extends Geometry{
     private final Point q0;
     private final Vector normal;
 
@@ -79,19 +82,19 @@ public class Plane implements Geometry{
         return String.format("Point: " + q0 + ", Normal: " + normal);
     }
 
-    public List<Point> findIntersections(Ray ray) {
-        List<Point> intersections = new ArrayList<>();
-
-        double denominator = normal.dotProduct(ray.getDirection());
-        if (!Util.isZero(denominator)) {
-            double t = normal.dotProduct(getq0().subtract(ray.getHead())) / denominator;
-
-            // Check if the intersection is in front of the ray's starting point
-            if (t >= 0) {
-                Point p = ray.getPoint(t);
-                intersections.add(p);
-            }
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray){
+        double denominator = (normal.dotProduct(q0.subtract(ray.getHead())))/(normal.dotProduct(ray.getDirection()));
+        if (denominator<=0) { //check if the intersection is behind the start of the ray
+            return null;
         }
-        return intersections.isEmpty() ? null : intersections;
+        else
+        {
+            Point P = ray.getPoint(denominator);
+            List<GeoPoint> intersectable = new LinkedList<>(); //will be adding so making it a linked list
+            intersectable.add(new GeoPoint(this, P));
+            return intersectable;
+        }
     }
+
+
 }
