@@ -59,8 +59,10 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     private Double3 calcSpecular(Material mat, Vector n, Vector l, double nl, Vector v) {
-        return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))),(double)mat.nShininess));
-//        // handle the case if the shininess is a negative number
+
+        //if (mat.nShininess > 0)
+        return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))),mat.nShininess));
+       // handle the case if the shininess is a negative number
 //        double m = Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))));
 //        double result = 1;
 //        for (int i = 0; i > mat.nShininess; --i)

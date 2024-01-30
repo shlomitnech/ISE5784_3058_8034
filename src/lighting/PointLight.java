@@ -4,7 +4,7 @@ import primitives.*;
 
 public class PointLight extends Light implements LightSource{
 
-    private Point position;
+    private final Point position;
     private double kC = 1;
     private double kL = 0;
     private double kQ = 0;
@@ -77,9 +77,9 @@ public class PointLight extends Light implements LightSource{
     }
 
 
-    public LightSource setNarrowBeam(int i) {
-        return this;
-    }
+//    public LightSource setNarrowBeam(int i) {
+//        return this;
+//    }
     protected double getReduction(Point p) {
         double dSquare = position.distanceSquared(p);
         return (kC + kL * Math.sqrt(dSquare) + kQ * dSquare);
