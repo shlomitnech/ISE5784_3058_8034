@@ -10,7 +10,7 @@ public abstract class Light {
      * @param c
      */
     protected Light(Color c) {
-        intensity = c;
+        this.intensity = c;
     }
 
     /***
