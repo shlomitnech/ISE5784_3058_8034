@@ -36,6 +36,12 @@ public class SimpleRayTracer extends RayTraceBase {
         return this.scene.ambientLight.getIntensity().add(calcLocalEffects(p,ray));
     }
 
+    /**
+     *
+     * @param gp
+     * @param ray
+     * @return
+     */
     private Color calcLocalEffects(GeoPoint gp, Ray ray){
         Color color = gp.geometry.getEmission();
         Vector v = ray.getDirection();
@@ -45,7 +51,7 @@ public class SimpleRayTracer extends RayTraceBase {
         Material material = gp.geometry.getMaterial();
         for (LightSource lightSource : scene.lights) {
             Vector l = lightSource.getL(gp.point);
-            double nl = alignZero(n.dotProduct(l));
+            double nl = alignZero(n.dotProduct(l)); //dot product of the vector's normal and vector's light source
             if (nl * nv > 0) {
                 Color iL = lightSource.getIntensity(gp.point);
                 color = color.add(iL.scale(calcDiffusive(material, Math.abs(nl))),
@@ -54,20 +60,28 @@ public class SimpleRayTracer extends RayTraceBase {
         }
         return color;
     }
+
+    /**
+     *
+     * @param mat
+     * @param nl
+     * @return
+     */
     private Double3 calcDiffusive(Material mat, double nl) {
         return mat.Kd.scale(nl);
     }
 
+    /**
+     *
+     * @param mat
+     * @param n
+     * @param l
+     * @param nl
+     * @param v
+     * @return
+     */
     private Double3 calcSpecular(Material mat, Vector n, Vector l, double nl, Vector v) {
-
-        //if (mat.nShininess > 0)
         return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))),mat.nShininess));
-       // handle the case if the shininess is a negative number
-//        double m = Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))));
-//        double result = 1;
-//        for (int i = 0; i > mat.nShininess; --i)
-//            result /= m;
-//        return mat.Ks.scale(result);
 
     }
 
