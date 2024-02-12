@@ -21,7 +21,7 @@ public class SimpleRayTracer extends RayTraceBase {
      *return the color of the closest point
      */
     public Color traceRay(Ray ray) {
-        List<GeoPoint> intersections = this.scene.geometries.findGeoIntersectionsHelper(ray);
+        List<GeoPoint> intersections = this.scene.geometries.findGeoIntersections(ray);
         if (intersections == null)
             return scene.background;
         GeoPoint closestPoint = ray.findClosestGeoPoint(intersections);
@@ -55,9 +55,11 @@ public class SimpleRayTracer extends RayTraceBase {
             Vector l = lightSource.getL(gp.point);
             double nl = alignZero(n.dotProduct(l)); //dot product of the vector's normal and vector's light source
             if (nl * nv > 0) {
-                Color iL = lightSource.getIntensity(gp.point);
-                color = color.add(iL.scale(calcDiffusive(material, Math.abs(nl))),
-                        iL.scale(calcSpecular(material, n, l, nl, v)));
+                if (unshaded(gp, l, n, nl, lightSource)) {
+                    Color iL = lightSource.getIntensity(gp.point);
+                    color = color.add(iL.scale(calcDiffusive(material, Math.abs(nl))),
+                            iL.scale(calcSpecular(material, n, l, nl, v)));
+                }
             }
         }
         return color;
@@ -86,21 +88,22 @@ public class SimpleRayTracer extends RayTraceBase {
         return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))),mat.nShininess));
 
     }
-    private boolean unshaded(GeoPoint gp, LightSource light, Vector l, Vector n, double nl){
-        Vector lightDirection = l.scale(-1); //from point to light source
-        Vector deltaVector = n.scale(nl < 0 ? DELTA : -DELTA); //this will flip the normal's direction
-        Point point = gp.point.add(deltaVector);
-        Ray lightRay = new Ray(point, lightDirection);
+    private boolean unshaded(GeoPoint gp, Vector l, Vector n, double nl, LightSource light){
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Vector deltaV = n.scale(n.dotProduct(lightDirection) > 0 ? DELTA : - DELTA);
+        Point p = gp.point.add(deltaV);
 
+        Ray lightRay = new Ray(p, lightDirection);
         List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
 
-        return scene.geometries.findGeoIntersectionsHelper(lightRay, light.getDistance(gp.point)) == null;
+        if (intersections == null) return true;
 
-//        in the unshaded method, if the list of cuts received
-//        is not empty - we will go through the list and if we
-//        encountered a cut that is Closer to the top of the beam than the
-//        distance between the point and the light source
-//        - we will return false
+        double rayLightDistance = light.getDistance(lightRay.head);
+        for (GeoPoint geopoint : intersections) {
+            double rayIntersectionDistance = lightRay.head.distance(geopoint.point);
+            if (rayIntersectionDistance < rayLightDistance) return false;
+        }
+        return true;  //nothing in between geo and lightsource
+
     }
-
 }

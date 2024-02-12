@@ -1,7 +1,9 @@
 package geometries;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 import primitives.Point;
@@ -90,6 +92,34 @@ public class Polygon extends Geometry { //original has EXTENDS
 
     @Override
     protected List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
-        return null;
+        var points = this.plane.findGeoIntersections(ray);
+        // Only check point if the ray intersects the plane of the polygon.
+        if (points == null)
+            return null;
+
+        Point p0 = ray.getHead();
+        Vector v = ray.getDirection();
+        List<Vector> vectors = new LinkedList<>();
+        // Construct vectors to the vertices
+        for (Point p : this.vertices) {
+            vectors.add(p.subtract(p0));
+        }
+        int vSize = vectors.size();
+        // Cross product each adjacent pair of vectors and check they all share the same
+        // sign
+        double normal = alignZero(vectors.get(vSize - 1).crossProduct(vectors.get(0)).dotProduct(v));
+        if (isZero(normal))
+            return null;
+        boolean sign = normal > 0;
+        for (int i = 0; i < vSize - 1; i++) {
+            normal = alignZero(vectors.get(i).crossProduct(vectors.get(i + 1)).dotProduct(v));
+            if ((normal > 0) ^ sign || isZero(normal))
+                return null;
+        }
+        points.getFirst().geometry = this;
+        return points;
     }
+
+
 }
+

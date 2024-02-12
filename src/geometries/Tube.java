@@ -4,6 +4,8 @@ import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
 
+import java.util.List;
+
 /***
  * Class Tube, inherits from Radial Geometry and contains an axisRay and radius
  */
@@ -48,5 +50,11 @@ public class Tube extends RadialGeometry {
     public double getRadius() {
         return radius;
     }
+
+    @Override
+    public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
+        return null;
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package lighting;
 
+import geometries.Intersectable;
 import primitives.*;
 
 public class PointLight extends Light implements LightSource{
@@ -76,13 +77,14 @@ public class PointLight extends Light implements LightSource{
         return p.subtract(position).normalize();
     }
 
-
-//    public LightSource setNarrowBeam(int i) {
-//        return this;
-//    }
     protected double getReduction(Point p) {
         double dSquare = position.distanceSquared(p);
         return (kC + kL * Math.sqrt(dSquare) + kQ * dSquare);
     }
+    @Override
+    public double getDistance(Point point) {
+        return position.distance(point);
+    }
+
 
 }
