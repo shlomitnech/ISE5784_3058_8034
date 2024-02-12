@@ -11,6 +11,8 @@ import static primitives.Util.alignZero;
 
 public class SimpleRayTracer extends RayTraceBase {
 
+    private static final double DELTA = 0.1;
+
     public SimpleRayTracer(Scene s) {
         super(s);
     }
@@ -69,6 +71,22 @@ public class SimpleRayTracer extends RayTraceBase {
 //            result /= m;
 //        return mat.Ks.scale(result);
 
+    }
+    private boolean unshaded(GeoPoint gp, LightSource light, Vector l, Vector n, double nl){
+        Vector lightDirection = l.scale(-1); //from point to light source
+        Vector deltaVector = n.scale(nl < 0 ? DELTA : -DELTA); //this will flip the normal's direction
+        Point point = gp.point.add(deltaVector);
+        Ray lightRay = new Ray(point, lightDirection);
+
+        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
+
+        return scene.geometries.findGeoIntersectionsHelper(lightRay, light.getDistance(gp.point)) == null;
+
+//        in the unshaded method, if the list of cuts received
+//        is not empty - we will go through the list and if we
+//        encountered a cut that is Closer to the top of the beam than the
+//        distance between the point and the light source
+//        - we will return false
     }
 
 }
