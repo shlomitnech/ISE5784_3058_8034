@@ -14,6 +14,7 @@ public class Triangle extends Polygon {
         super(p1,p2,p3);
     }
 
+    @Override
     public List<GeoPoint> findGeoIntersectionsHelper(Ray ray) {
         // Find the intersection point with the triangle's plane
         List<Point> planeIntersections = this.plane.findIntersections(ray);

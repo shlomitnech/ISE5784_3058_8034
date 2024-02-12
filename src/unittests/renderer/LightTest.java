@@ -161,7 +161,6 @@ public class LightTest {
         scene2.geometries.add(triangle1, triangle2);
         scene2.lights.add(new SpotLight(trianglesLightColor, trianglesLightPosition, trianglesLightDirection)
                 .setKl(0.001).setKq(0.0001));
-
         camera2.setImageWriter(new ImageWriter("lightTrianglesSpot", 500, 500))
                 .build()
                 .renderImage();
