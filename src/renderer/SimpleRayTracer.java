@@ -8,6 +8,7 @@ import geometries.Intersectable.GeoPoint;
 import java.util.List;
 
 import static primitives.Util.alignZero;
+import static primitives.Util.isZero;
 
 public class SimpleRayTracer extends RayTraceBase {
 
@@ -59,6 +60,53 @@ public class SimpleRayTracer extends RayTraceBase {
         return level == 1 ? color : color.add(calcGlobalEffects(gp,ray,level,k));
     }
 
+    /***
+
+     * @param gp
+     * @param ray
+     * @param level
+     * @param k attenuation coefficent
+     * @return sum of the colors from the two secondary rays
+     */
+    private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k){
+        Vector norm = gp.geometry.getNormal(gp.point);
+        Material mat = gp.geometry.getMaterial();
+        Vector dir = ray.getDirection();
+        return calcGlobalEffects(constructReflectedRay(ray, gp, norm ),level, k, mat.kR) //send the reflection
+                .add(calcGlobalEffects(constructRefractedRay(gp, ray, norm),level, k, mat.kT)); //send transparancy
+    }
+
+    /**
+     * method calculates the color of the ray by calculating the intersection point closest
+     *  to the beginning of the ray and calc its color by calling a recursive method calcColor
+     *
+     * @param ray
+     * @param level
+     * @param k attenuation coeficient
+     * @param kx reflected coefficient or transparency coefficient
+     * @return
+     */
+    private Color calcGlobalEffects(Ray ray, int level, Double3 k, Double3 kx){
+        Double3 kkx = k.product(kx);
+        if (kkx.lowerThan(MIN_CALC_COLOR_K))
+            return Color.BLACK;
+        GeoPoint gp = findClosestIntersection(ray);
+        if (gp == null)
+            return scene.background.scale(kx);
+        return isZero(gp.geometry.getNormal(gp.point).dotProduct(ray.getDirection())) ? Color.BLACK
+                : calcColor(gp, ray, level - 1, kkx);
+
+    }
+
+    /**
+     * calc closest intersection point to the ray's head
+     * if no intersections, return null
+     * @param ray
+     * @return closest point to ray's head
+     */
+    private GeoPoint findClosestIntersection(Ray ray) {
+        return ray.findClosestGeoPoint(scene.geometries.findGeoIntersections(ray));
+    }
 
     /**
      *
@@ -125,26 +173,26 @@ public class SimpleRayTracer extends RayTraceBase {
     /**
      * Method that constructs a reflected ray
      * @param ray Ray
-     * @param point Point
+     * @param gp Point
      * @param normal Vector
      * @return constructs a reflection ray
      */
-    private Ray constructReflectedRay(Ray ray, Point point, Vector normal) {
+    private Ray constructReflectedRay(Ray ray, GeoPoint gp, Vector normal) {
         //direction ray = 𝒗−(𝟐 * (𝒗*𝒏) * n)
-        return new Ray(point, ray.direction.subtract((normal.scale(normal.dotProduct(ray.direction))).scale(2)),  normal);
+        return new Ray(gp.point, ray.direction.subtract((normal.scale(normal.dotProduct(ray.direction))).scale(2)),  normal);
     }
 
     /**
      * constructs a refraction ray
      * for our implementation refraction index is 1
-     * @param point Point
+     * @param gp Point
      * @param ray Ray
      * @param normal Vector
      * @return
      */
-    private Ray constructRefractedRay(Point point, Ray ray, Vector normal) {
+    private Ray constructRefractedRay(GeoPoint gp, Ray ray, Vector normal) {
         // ray = direction vector because they will have the same n1 and n2
-        return new Ray(point, ray.direction,  normal);
+        return new Ray(gp.point, ray.direction,  normal);
     }
 
 
