@@ -2,14 +2,17 @@ package primitives;
 
 import geometries.Intersectable.GeoPoint;
 import java.util.List;
+import renderer.*;
 
 import static java.lang.Double.MAX_VALUE;
+import static primitives.Util.isZero;
 
 /**
  * Class Ray, contains a point head and direction vector
  * @author Shlomit and Jessica
  */
 public class Ray {
+    private static final double DELTA = 0.1;
     public Point head;
     public Vector direction;
 
@@ -20,6 +23,17 @@ public class Ray {
     public Ray(Point p, Vector v) {
         head = p;
         direction = v.normalize();
+    }
+
+    /**
+     * constructs rays that hit objects (reconstructed rays)
+     * @param p
+     * @param dir
+     * @param normal
+     */
+    public Ray(Point p, Vector dir, Vector normal){
+        head = isZero(dir.dotProduct(normal)) ? p : dir.dotProduct(normal) > 0 ? p.add(normal.scale(DELTA)) : p.add(normal.scale(-DELTA));
+        this.direction = dir.normalize();
     }
 
     /***

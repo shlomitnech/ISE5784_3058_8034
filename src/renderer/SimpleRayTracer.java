@@ -106,4 +106,31 @@ public class SimpleRayTracer extends RayTraceBase {
         return true;  //nothing in between geo and lightsource
 
     }
+
+    /**
+     * Method that constructs a reflected ray
+     * @param ray Ray
+     * @param point Point
+     * @param normal Vector
+     * @return constructs a reflection ray
+     */
+    private Ray constructReflectedRay(Ray ray, Point point, Vector normal) {
+        //direction ray = 𝒗−(𝟐 * (𝒗*𝒏) * n)
+        return new Ray(point, ray.direction.subtract((normal.scale(normal.dotProduct(ray.direction))).scale(2)),  normal);
+    }
+
+    /**
+     * constructs a refraction ray
+     * @param point Point
+     * @param ray Ray
+     * @param normal Vector
+     * @return
+     */
+    private Ray constructRefractedRay(Point point, Ray ray, Vector normal) {
+       //for our implementation refraction index is 1
+        // ray = direction vector because they will have the same n1 and n2
+        return new Ray(point, ray.direction,  normal);
+    }
+
+
 }
