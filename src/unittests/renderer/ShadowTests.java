@@ -93,8 +93,8 @@ public class ShadowTests {
     @Test
     public void sphereTriangleSpot1() throws CloneNotSupportedException {
         sphereTriangleHelper("shadowSphereTriangleSpot1", //
-                new Triangle(new Point(-70, -40, 0), new Point(-40, -70, 0), new Point(-68, -68, -4)), //
-                new Point(-65, -65, 50));
+                new Triangle(new Point(-70, -40, 0), new Point(-40, -70, 0), new Point(-68, -68, -4)),
+                new Point(-80, -80, 60)); //point of spot light
     }
 
     /**
