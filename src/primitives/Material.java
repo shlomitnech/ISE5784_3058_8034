@@ -5,7 +5,16 @@ package primitives;
  *
  */
 public class Material {
-    public Double3 Kd = Double3.ZERO, Ks = Double3.ZERO;
+    /**
+     * kD = diffusive attenuation coefficient
+     * kS = specular attenuation coefficient
+     * kT = transparency coefficient
+     * kR = reflection coefficient
+     */
+    public Double3 Kd = Double3.ZERO;
+    public Double3 Ks = Double3.ZERO;
+    public Double3 kT = Double3.ZERO;
+    public Double3 kR = Double3.ZERO;
     public int nShininess = 0;
 
     /**
@@ -42,6 +51,45 @@ public class Material {
         return this;
     }
 
+    /**
+     * sets transparency coefficient
+     * @param kT
+     * @return this (builder pattern)
+     */
+    public Material setkT(double kT) {
+        this.kT = new Double3(kT);
+        return this;
+    }
+
+    /**
+     * sets transparency coeff
+     * @param kT
+     * @return this (builder pattern)
+     */
+    public Material setkT(Double3 kT) {
+        this.kT = kT;
+        return this;
+    }
+
+    /**
+     * sets refelection coeff
+     * @param kR
+     * @return this (builder pattern)
+     */
+    public Material setkR(double kR) {
+        this.kR = new Double3(kR);
+        return this;
+    }
+
+    /**
+     * sets reflection coeff
+     * @param kR
+     * @return this (builder pattern)
+     */
+    public Material setkR(Double3 kR) {
+        this.kR = kR;
+        return this;
+    }
     /**
      * Sets the level of shininess.
      * @param nShininess int
