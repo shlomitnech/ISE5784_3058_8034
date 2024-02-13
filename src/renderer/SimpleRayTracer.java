@@ -11,6 +11,10 @@ import static primitives.Util.alignZero;
 
 public class SimpleRayTracer extends RayTraceBase {
 
+    private static final int MAX_CALC_COLOR_LEVEL = 10;
+    private static final double MIN_CALC_COLOR_K = 0.001;
+    private static final Double3 INITIAL_K = new Double3(1.0);
+
     private static final double DELTA = 0.1;
 
     public SimpleRayTracer(Scene s) {
@@ -30,13 +34,31 @@ public class SimpleRayTracer extends RayTraceBase {
 
     /***
      * Get the color from ambient light and intensity
-     * @param p intersection point
+     * calls helper function
+     * @param gp intersection point
+     * @param ray
      * @returns color
      */
-    private Color calcColor(GeoPoint p, Ray ray) {
-
-        return this.scene.ambientLight.getIntensity().add(calcLocalEffects(p,ray));
+    private Color calcColor(GeoPoint gp, Ray ray) {
+        return calcColor(gp, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K )
+                .add(scene.ambientLight.getIntensity());
     }
+
+    /**
+     * helper for calc color
+     * @param gp
+     * @param ray
+     * @param level
+     * @param k
+     * @return
+     */
+    private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
+        primitives.Color color = gp.geometry.getEmission().add(calcLocalEffects(gp,ray));
+        //if level == 1 return the color
+        // else calculate the global effects
+        return level == 1 ? color : color.add(calcGlobalEffects(gp,ray,level,k));
+    }
+
 
     /**
      *
@@ -66,17 +88,12 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     /**
-     *
      * @param mat
      * @param nl
      * @return
      */
-    private Double3 calcDiffusive(Material mat, double nl) {
-        return mat.Kd.scale(nl);
-    }
-
+    private Double3 calcDiffusive(Material mat, double nl) { return mat.Kd.scale(nl); }
     /**
-     *
      * @param mat
      * @param n
      * @param l
@@ -86,7 +103,6 @@ public class SimpleRayTracer extends RayTraceBase {
      */
     private Double3 calcSpecular(Material mat, Vector n, Vector l, double nl, Vector v) {
         return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))),mat.nShininess));
-
     }
     private boolean unshaded(GeoPoint gp, Vector l, Vector n, double nl, LightSource light){
         Vector lightDirection = l.scale(-1); // from point to light source
@@ -106,7 +122,6 @@ public class SimpleRayTracer extends RayTraceBase {
         return true;  //nothing in between geo and lightsource
 
     }
-
     /**
      * Method that constructs a reflected ray
      * @param ray Ray
@@ -121,13 +136,13 @@ public class SimpleRayTracer extends RayTraceBase {
 
     /**
      * constructs a refraction ray
+     * for our implementation refraction index is 1
      * @param point Point
      * @param ray Ray
      * @param normal Vector
      * @return
      */
     private Ray constructRefractedRay(Point point, Ray ray, Vector normal) {
-       //for our implementation refraction index is 1
         // ray = direction vector because they will have the same n1 and n2
         return new Ray(point, ray.direction,  normal);
     }
