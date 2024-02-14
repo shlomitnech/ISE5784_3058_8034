@@ -75,23 +75,18 @@ public class SimpleRayTracer extends RayTraceBase {
      * @return sum of the colors from the two secondary rays
      */
     private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k){
-//        Vector norm = gp.geometry.getNormal(gp.point);
-//        Material mat = gp.geometry.getMaterial();
-//        Vector dir = ray.getDirection();
-//        return calcGlobalEffects(constructReflectedRay(ray, gp, norm ),level, k, mat.kR) //send the reflection
-//                .add(calcGlobalEffects(constructRefractedRay(gp, ray, norm),level, k, mat.kT)); //send transparancy
-        primitives.Color color = new primitives.Color(Color.BLACK.getColor());
-        Vector n = gp.geometry.getNormal(gp.point).normalize();  // get normal vector
-        Material material = gp.geometry.getMaterial();
+        primitives.Color color = new primitives.Color(Color.BLACK.getColor()); //start withthe black color
+        Vector norm = gp.geometry.getNormal(gp.point).normalize(); //find the norm of geometry and point
+        Material mat = gp.geometry.getMaterial();
 
-        Double3 kkr = k.product(material.kR);
-        Double3 kkt = k.product(material.kT);
+        Double3 kkr = k.product(mat.kR); //attenuation factor * reflection coefficient
+        Double3 kkt = k.product(mat.kT); //attenuation factor * transparency coefficient
 
-        if(!(kkr.lowerThan(MIN_CALC_COLOR_K))) //stop recursion
-            color = color.add(calcGlobalEffects(constructReflectedRay(ray,gp,n), level, material.kR, kkr));
+        if(!(kkr.lowerThan(MIN_CALC_COLOR_K))) //send the reflection if kkr > min_color
+            color = color.add(calcGlobalEffects(constructReflectedRay(ray,gp,norm), level, mat.kR, kkr));
 
-        if(!(kkt.lowerThan(MIN_CALC_COLOR_K)))
-            color = color.add( calcGlobalEffects(constructRefractedRay(gp,ray,n), level, material.kT, kkt));
+        if(!(kkt.lowerThan(MIN_CALC_COLOR_K))) //send the transparency if kkt > min_color
+            color = color.add( calcGlobalEffects(constructRefractedRay(gp,ray,norm), level, mat.kT, kkt));
         return color;
 
     }
@@ -109,7 +104,6 @@ public class SimpleRayTracer extends RayTraceBase {
     private Color calcGlobalEffects(Ray ray, int level, Double3 k, Double3 kx){
         GeoPoint gp = findClosestIntersection(ray);
         return(gp == null ? scene.background : calcColor(gp, ray, level-1, kx).scale(k));
-
     }
     /**
      *
