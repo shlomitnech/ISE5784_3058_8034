@@ -22,15 +22,23 @@ public class SimpleRayTracer extends RayTraceBase {
         super(s);
     }
 
+
+    /**
+     * calc the closest intersection point to the ray's head
+     * if no intersections, return null
+     * @param ray
+     * @return closest point to ray's head
+     */
+    private GeoPoint findClosestIntersection(Ray ray) {
+        return ray.findClosestGeoPoint(scene.geometries.findGeoIntersections(ray));
+    }
     /***
      *return the color of the closest point
      */
+    @Override
     public Color traceRay(Ray ray) {
-        List<GeoPoint> intersections = this.scene.geometries.findGeoIntersections(ray);
-        if (intersections == null)
-            return scene.background;
-        GeoPoint closestPoint = ray.findClosestGeoPoint(intersections);
-        return calcColor(closestPoint, ray);
+        GeoPoint closestPoint = findClosestIntersection(ray); //return the closest GeoPoint that the ray hits
+        return closestPoint == null ? scene.background : calcColor(closestPoint, ray);
     }
 
     /***
@@ -54,10 +62,12 @@ public class SimpleRayTracer extends RayTraceBase {
      * @return
      */
     private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
-        primitives.Color color = gp.geometry.getEmission().add(calcLocalEffects(gp,ray));
+       // Color color = gp.geometry.getEmission().add(calcLocalEffects(gp,ray));
+       Color color = calcLocalEffects(gp, ray, k);
         //if level == 1 return the color
         // else calculate the global effects
-        return level == 1 ? color : color.add(calcGlobalEffects(gp,ray,level,k));
+        return 1 == level ? color : color.add(calcGlobalEffects(gp, ray, level, k));
+
     }
 
     /***
@@ -97,38 +107,29 @@ public class SimpleRayTracer extends RayTraceBase {
                 : calcColor(gp, ray, level - 1, kkx);
 
     }
-
-    /**
-     * calc closest intersection point to the ray's head
-     * if no intersections, return null
-     * @param ray
-     * @return closest point to ray's head
-     */
-    private GeoPoint findClosestIntersection(Ray ray) {
-        return ray.findClosestGeoPoint(scene.geometries.findGeoIntersections(ray));
-    }
-
     /**
      *
      * @param gp
      * @param ray
      * @return
      */
-    private Color calcLocalEffects(GeoPoint gp, Ray ray){
+    private Color calcLocalEffects(GeoPoint gp, Ray ray, Double3 k){
         Color color = gp.geometry.getEmission();
         Vector v = ray.getDirection();
         Vector n = gp.geometry.getNormal(gp.point);
         double nv = alignZero(n.dotProduct(v));
         if (nv == 0) return color;
         Material material = gp.geometry.getMaterial();
+        //if the light source is the same side as camera
         for (LightSource lightSource : scene.lights) {
             Vector l = lightSource.getL(gp.point);
             double nl = alignZero(n.dotProduct(l)); //dot product of the vector's normal and vector's light source
             if (nl * nv > 0) {
-                if (unshaded(gp, l, n, nl, lightSource)) {
-                    Color iL = lightSource.getIntensity(gp.point);
-                    color = color.add(iL.scale(calcDiffusive(material, Math.abs(nl))),
-                            iL.scale(calcSpecular(material, n, l, nl, v)));
+                Double3 ktr = transparency(gp, lightSource, l,n); //find the transparency of the geometry being hit
+                if(!(k.product(ktr).lowerThan(MIN_CALC_COLOR_K))){
+                    Color iL = lightSource.getIntensity(gp.point).scale(ktr);
+                    color = color.add(iL.scale(calcDiffusive(material,Math.abs(nl))),
+                            iL.scale(calcSpecular(material,n,l,nl, v)));
                 }
             }
         }
@@ -151,23 +152,6 @@ public class SimpleRayTracer extends RayTraceBase {
      */
     private Double3 calcSpecular(Material mat, Vector n, Vector l, double nl, Vector v) {
         return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))),mat.nShininess));
-    }
-    private boolean unshaded(GeoPoint gp, Vector l, Vector n, double nl, LightSource light){
-        Vector lightDirection = l.scale(-1); // from point to light source
-        Vector deltaV = n.scale(n.dotProduct(lightDirection) > 0 ? DELTA : - DELTA);
-        Point p = gp.point.add(deltaV);
-
-        Ray lightRay = new Ray(p, lightDirection);
-        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
-
-        if (intersections == null) return true;
-
-        double rayLightDistance = light.getDistance(lightRay.head);
-        for (GeoPoint geopoint : intersections) {
-            double rayIntersectionDistance = lightRay.head.distance(geopoint.point);
-            if (rayIntersectionDistance < rayLightDistance) return false;
-        }
-        return true;  //nothing in between geo and lightsource
 
     }
     /**
@@ -195,5 +179,33 @@ public class SimpleRayTracer extends RayTraceBase {
         return new Ray(gp.point, ray.direction,  normal);
     }
 
+    /**
+     * check if a geometry is blocking this current geometry
+     * @param gp GeoPoint
+     * @param light LightSource
+     * @param l Vector
+     * @param n Vector
+     * @return Double3
+     */
+
+    private Double3 transparency(GeoPoint gp, LightSource light, Vector l, Vector n){
+
+        Vector lightDirection = l.scale(-1); // from point to light source
+        Ray lightRay = new Ray(gp.point, lightDirection,n);
+
+        List<GeoPoint> intersections = scene.geometries.findGeoIntersections(lightRay);
+        if (intersections == null) return new Double3(1.0);
+
+        Double3 ktr = new Double3(1.0);
+
+        double rayLightDistance = light.getDistance(lightRay.head);
+        //loop over intersections and for each intersection which is closer to the point than the light source,
+        //multiply ktr by kT of its geometry
+        for (GeoPoint geopoint : intersections) {
+            double rayIntersectionDistance = lightRay.head.distance(geopoint.point);
+            if (rayIntersectionDistance < rayLightDistance) return geopoint.geometry.getMaterial().kT.product(ktr);
+        }
+        return ktr;
+    }
 
 }
