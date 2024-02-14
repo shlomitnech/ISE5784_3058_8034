@@ -62,12 +62,8 @@ public class SimpleRayTracer extends RayTraceBase {
      * @return
      */
     private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
-       // Color color = gp.geometry.getEmission().add(calcLocalEffects(gp,ray));
-       Color color = calcLocalEffects(gp, ray, k);
-        //if level == 1 return the color
-        // else calculate the global effects
+       Color color = gp.geometry.getEmission().add(calcLocalEffects(gp,ray,k));
         return 1 == level ? color : color.add(calcGlobalEffects(gp, ray, level, k));
-
     }
 
     /***
@@ -79,11 +75,25 @@ public class SimpleRayTracer extends RayTraceBase {
      * @return sum of the colors from the two secondary rays
      */
     private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k){
-        Vector norm = gp.geometry.getNormal(gp.point);
-        Material mat = gp.geometry.getMaterial();
-        Vector dir = ray.getDirection();
-        return calcGlobalEffects(constructReflectedRay(ray, gp, norm ),level, k, mat.kR) //send the reflection
-                .add(calcGlobalEffects(constructRefractedRay(gp, ray, norm),level, k, mat.kT)); //send transparancy
+//        Vector norm = gp.geometry.getNormal(gp.point);
+//        Material mat = gp.geometry.getMaterial();
+//        Vector dir = ray.getDirection();
+//        return calcGlobalEffects(constructReflectedRay(ray, gp, norm ),level, k, mat.kR) //send the reflection
+//                .add(calcGlobalEffects(constructRefractedRay(gp, ray, norm),level, k, mat.kT)); //send transparancy
+        primitives.Color color = new primitives.Color(Color.BLACK.getColor());
+        Vector n = gp.geometry.getNormal(gp.point).normalize();  // get normal vector
+        Material material = gp.geometry.getMaterial();
+
+        Double3 kkr = k.product(material.kR);
+        Double3 kkt = k.product(material.kT);
+
+        if(!(kkr.lowerThan(MIN_CALC_COLOR_K))) //stop recursion
+            color = color.add(calcGlobalEffects(constructReflectedRay(ray,gp,n), level, material.kR, kkr));
+
+        if(!(kkt.lowerThan(MIN_CALC_COLOR_K)))
+            color = color.add( calcGlobalEffects(constructRefractedRay(gp,ray,n), level, material.kT, kkt));
+        return color;
+
     }
 
     /**
@@ -97,14 +107,8 @@ public class SimpleRayTracer extends RayTraceBase {
      * @return
      */
     private Color calcGlobalEffects(Ray ray, int level, Double3 k, Double3 kx){
-        Double3 kkx = k.product(kx);
-        if (kkx.lowerThan(MIN_CALC_COLOR_K))
-            return Color.BLACK;
         GeoPoint gp = findClosestIntersection(ray);
-        if (gp == null)
-            return scene.background.scale(kx);
-        return isZero(gp.geometry.getNormal(gp.point).dotProduct(ray.getDirection())) ? Color.BLACK
-                : calcColor(gp, ray, level - 1, kkx);
+        return(gp == null ? scene.background : calcColor(gp, ray, level-1, kx).scale(k));
 
     }
     /**
@@ -152,7 +156,6 @@ public class SimpleRayTracer extends RayTraceBase {
      */
     private Double3 calcSpecular(Material mat, Vector n, Vector l, double nl, Vector v) {
         return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))),mat.nShininess));
-
     }
     /**
      * Method that constructs a reflected ray
