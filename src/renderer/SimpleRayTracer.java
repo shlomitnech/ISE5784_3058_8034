@@ -51,6 +51,7 @@ public class SimpleRayTracer extends RayTraceBase {
     private Color calcColor(GeoPoint gp, Ray ray) {
         return calcColor(gp, ray, MAX_CALC_COLOR_LEVEL, INITIAL_K )
                 .add(scene.ambientLight.getIntensity());
+        //returns color of the point where the ray hits combined with ambient light
     }
 
     /**
