@@ -32,8 +32,12 @@ public class Ray {
      * @param normal
      */
     public Ray(Point p, Vector dir, Vector normal){
-        head = isZero(dir.dotProduct(normal)) ? p : dir.dotProduct(normal) > 0 ? p.add(normal.scale(DELTA)) : p.add(normal.scale(-DELTA));
-        this.direction = dir.normalize();
+        direction = dir.normalize();
+        double nv = normal.dotProduct(direction);
+        Vector delta  =normal.scale(DELTA); //moved here as to not violate DRY (we use this delta for shadow, reflected and refracted)
+        if (nv < 0)
+            delta = delta.scale(-1);
+        this.head = p.add(delta);
     }
 
     /***
