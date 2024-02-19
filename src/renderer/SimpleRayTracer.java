@@ -74,6 +74,9 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     /***
+     * calculates gobal effects
+     * recursively traces the rays to determine the overall color
+     *
      * @param gp intersection pt with geometry
      * @param ray that hits point
      * @param level current recursion level
@@ -102,14 +105,12 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     /**
-     * method calculates the color of the ray by calculating the intersection point closest
-     * to the beginning of the ray and calc its color by calling a recursive method calcColor
-     *
-     * @param ray
-     * @param level
-     * @param k     attenuation coeficient
-     * @param kx    reflected coefficient or transparency coefficient
-     * @return
+     * Calculates the global effect of reflection or refraction for a ray
+     * @param ray in which to calculate global effect
+     * @param level current recurison level
+     * @param k     attenuation coeficient (global effect)
+     * @param kx    global effect * materials reflection or refraction coefficient
+     * @return color of the global effect
      */
     private Color calcGlobalEffects(Ray ray, int level, Double3 k, Double3 kx) {
         GeoPoint gp = findClosestIntersection(ray);
@@ -126,12 +127,15 @@ public class SimpleRayTracer extends RayTraceBase {
         Vector v = ray.getDirection();
         Vector n = gp.geometry.getNormal(gp.point);
         double nv = alignZero(n.dotProduct(v));
+        //if direction is perpendicular to the surface, return emission color
         if (nv == 0) return color;
+
         Material material = gp.geometry.getMaterial();
-        //if the light source is the same side as camera
+        //iterate through all the light sources in the scene
         for (LightSource lightSource : scene.lights) {
             Vector l = lightSource.getL(gp.point);
             double nl = alignZero(n.dotProduct(l)); //dot product of the vector's normal and vector's light source
+           //check light source and view are on the same side of surface
             if (nl * nv > 0) {
                 Double3 ktr = transparency(gp, lightSource, l, n, nv); //find the transparency of the geometry being hit
                 if (!(k.product(ktr).lowerThan(MIN_CALC_COLOR_K))) {
@@ -163,7 +167,7 @@ public class SimpleRayTracer extends RayTraceBase {
      */
     private Double3 calcSpecular(Material mat, Vector n, Vector l, double nl, Vector v) {
         // Calculate the specular coefficient raised to the power of the shininess factor.
-        return mat.Ks.scale(Math.pow((Math.max(0, -alignZero(v.dotProduct(l.subtract(n.scale(nl * 2)))))), mat.nShininess));
+        return mat.Ks.scale(Math.pow(-alignZero(v.dotProduct(l.subtract(n.scale(nl * 2)))), mat.nShininess));
     }
 
     /**
