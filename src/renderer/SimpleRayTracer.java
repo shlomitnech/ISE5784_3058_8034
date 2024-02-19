@@ -61,10 +61,10 @@ public class SimpleRayTracer extends RayTraceBase {
      * helper for calc color
      * will add the global and local effects
      *
-     * @param gp
-     * @param ray
-     * @param level
-     * @param k
+     * @param gp intersection point with geometry
+     * @param ray from that intersects with geometry
+     * @param level current recursion level
+     * @param k transparency coefficient
      * @return
      */
     private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
@@ -74,14 +74,16 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     /***
-     * @param gp
-     * @param ray
-     * @param level
+     * @param gp intersection pt with geometry
+     * @param ray that hits point
+     * @param level current recursion level
      * @param k attenuation coefficent
      * @return sum of the colors from the two secondary rays
      */
     private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
-        primitives.Color color = new primitives.Color(Color.BLACK.getColor()); //start withthe black color
+        //initialize color to black
+        Color color = Color.BLACK;
+
         Vector norm = gp.geometry.getNormal(gp.point).normalize(); //find the norm of geometry and point
         Material mat = gp.geometry.getMaterial();
 
@@ -94,6 +96,7 @@ public class SimpleRayTracer extends RayTraceBase {
 
         if (!(kkt.lowerThan(MIN_CALC_COLOR_K))) //send the transparency if kkt > min_color
             color = color.add(calcGlobalEffects(constructRefractedRay(gp, ray, norm), level, mat.kT, kkt));
+
         return color;
 
     }
@@ -151,7 +154,7 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     /**
-     * @param mat
+     * @param mat to get the specular coefficient (Ks) and nshininess
      * @param n
      * @param l
      * @param nl
@@ -159,12 +162,13 @@ public class SimpleRayTracer extends RayTraceBase {
      * @return
      */
     private Double3 calcSpecular(Material mat, Vector n, Vector l, double nl, Vector v) {
-        return mat.Ks.scale(Math.pow((Math.max(0, -v.dotProduct(l.subtract(n.scale(nl * 2))))), mat.nShininess));
+        // Calculate the specular coefficient raised to the power of the shininess factor.
+        return mat.Ks.scale(Math.pow((Math.max(0, -alignZero(v.dotProduct(l.subtract(n.scale(nl * 2)))))), mat.nShininess));
     }
 
     /**
      * Method that constructs a reflected ray
-     * direction ray = 𝒗 −(𝟐 * (𝒗 . 𝒏) * n)
+     * direction vector = 𝒗 −(𝟐 * (𝒗 dot 𝒏) * n)
      * @param ray    Ray
      * @param gp     Point
      * @param normal Vector
@@ -177,7 +181,7 @@ public class SimpleRayTracer extends RayTraceBase {
         if (vn == 0) { //there is no reflection
             return null;
         }
-        return new Ray(gp.point, v.subtract(normal.scale(2* vn)), normal);
+        return new Ray(gp.point, v.subtract(normal.scale(2 * vn)), normal);
     }
 
     /**
