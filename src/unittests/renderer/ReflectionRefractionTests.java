@@ -106,17 +106,19 @@ public class ReflectionRefractionTests {
     @Test
     public void test1() throws CloneNotSupportedException {
         scene.geometries.add(
-                new Sphere(new Point(0, 0, -10), 15d).setEmission(new Color(BLUE))
+                new Sphere(new Point(0, 0, -10), 15d).setEmission(new Color(102,97,255))
                         .setMaterial(new Material().setKd(0.5).setKs(0.5).setShininess(100)),
-                new Sphere(new Point(0, -20, -20), 20d).setEmission(new Color(37,201,37))
+                new Sphere(new Point(0, -20, -20), 20d).setEmission(new Color(78,73,222))
                         .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
-                new Sphere(new Point(0, -50, -30), 30d).setEmission(new Color(25,107,36))
+                new Sphere(new Point(0, -50, -30), 30d).setEmission(new Color(60,57,178))
                 .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.5)));
         scene.geometries.add(
-                new Triangle(new Point(-100, -200, -115), new Point(-70, 40, -140), new Point(75, 50, -150))
-                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)));
+                new Triangle(new Point(-5, 15, -10), new Point(5, 15, -10), new Point(0, 20, -10))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(RED)),
+                new Triangle(new Point(0, -200, -115), new Point(-70, 40, -140), new Point(75, 50, -150))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(GRAY)));
         scene.lights.add(
-                new SpotLight(new Color(1000, 600, 0), new Point(-100, -100, 500), new Vector(-1, -1, -2))
+                new SpotLight(new Color(700, 400, 400), new Point(-100, -100, 500), new Vector(-1, -1, -2))
                         .setKl(0.0004).setKq(0.0000006));
         scene.setBackground(new Color(128, 255 , 243));
         cameraBuilder.setLocation(new Point(0, 0, 1000)).setVpDistance(1000)
