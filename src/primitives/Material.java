@@ -1,9 +1,5 @@
 package primitives;
 
-/**
- * @author Yahel and Ashi
- *
- */
 public class Material {
     /**
      * kD = diffusive attenuation coefficient
