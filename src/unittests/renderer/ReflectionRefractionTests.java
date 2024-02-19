@@ -101,4 +101,9 @@ public class ReflectionRefractionTests {
         cameraBuilder.build().renderImage();
         cameraBuilder.build().writeToImage();
     }
+
+    @Test
+    void test1() {
+
+    }
 }
