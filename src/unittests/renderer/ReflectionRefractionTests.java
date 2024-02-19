@@ -103,7 +103,21 @@ public class ReflectionRefractionTests {
     }
 
     @Test
-    void test1() {
+    public void test1() throws CloneNotSupportedException {
+        scene.geometries.add(
+                new Sphere(new Point(20, 0, -50), 30d).setEmission(new Color(GREEN))
+                        .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
+                new Sphere(new Point(40, 0, -50), 15d).setEmission(new Color(YELLOW))
+                        .setMaterial(new Material().setKd(0.5).setKs(0.5).setShininess(100)));
+        scene.lights.add(
+                new SpotLight(new Color(1000, 600, 0), new Point(-100, -100, 500), new Vector(-1, -1, -2))
+                        .setKl(0.0004).setKq(0.0000006));
 
+        cameraBuilder.setLocation(new Point(0, 0, 1000)).setVpDistance(1000)
+                .setVpSize(150, 150)
+                .setImageWriter(new ImageWriter("refractionTwoSpheres", 500, 500))
+                .build();
+        cameraBuilder.build().renderImage();
+        cameraBuilder.build().writeToImage();
     }
 }
