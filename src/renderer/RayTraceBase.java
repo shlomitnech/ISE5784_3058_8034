@@ -16,5 +16,5 @@ public abstract class RayTraceBase {
         this.scene=scene;
     }
 
-    public abstract primitives.Color traceRay(Ray ray);
+    public abstract Color traceRay(Ray ray);
 }

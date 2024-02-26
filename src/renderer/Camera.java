@@ -106,7 +106,7 @@ public class Camera implements java.lang.Cloneable  {
     /**
      * casts a ray through every pixel of image writer and colors that pixel
      */
-    public void renderImage(){ //changed from return void
+    public void renderImage(){
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }

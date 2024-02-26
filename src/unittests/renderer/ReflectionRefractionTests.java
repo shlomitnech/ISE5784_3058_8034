@@ -120,7 +120,7 @@ public class ReflectionRefractionTests {
         scene.lights.add(
                 new SpotLight(new Color(700, 400, 400), new Point(-100, -100, 500), new Vector(-1, -1, -2))
                         .setKl(0.0004).setKq(0.0000006));
-        scene.setBackground(new Color(128, 255 , 243));
+        scene.setBackground(new Color(128, 255 , 243)); //sky blue
         cameraBuilder.setLocation(new Point(0, 0, 1000)).setVpDistance(1000)
                 .setVpSize(150, 150)
                 .setImageWriter(new ImageWriter("snowMan", 500, 500))
