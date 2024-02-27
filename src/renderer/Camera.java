@@ -100,7 +100,6 @@ public class Camera implements java.lang.Cloneable  {
             pIJ = pIJ.add(vUp.scale(offsetY));
         return new Ray(p0, pIJ.subtract(p0));
 
-
     }
 
     /**

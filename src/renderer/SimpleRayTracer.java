@@ -73,14 +73,38 @@ public class SimpleRayTracer extends RayTraceBase {
         return 1 == level ? color : color.add(calcGlobalEffects(gp, ray, level, k));
     }
 
+    /**
+     * method to calculate the color when shooting multiple rays rather than just one.
+     * it will calculate the average of all the colors and return it
+     * @param level
+     * @param k
+     * @param kB
+     * @param rays
+     * @return the avg of the colors
+     */
+    private Color calcRayBeamColor(int level, Double3 k, Double3 kB, List<Ray> rays) {
+        if (rays.size() == 1) {
+            return calcGlobalEffects(rays.get(0), level, k, kB);
+        }
+        Color color = Color.BLACK;
+        int size = 0;
+        for (Ray rT : rays) {
+            color = color.add(calcGlobalEffects(rT, level, k, kB));
+            size++;
+        }
+
+        if (size == 0)
+            return color;
+        return color.reduce((int) size); //this was double before
+    }
     /***
-     * calculates gobal effects
+     * calculates global effects
      * recursively traces the rays to determine the overall color
      *
      * @param gp intersection pt with geometry
      * @param ray that hits point
      * @param level current recursion level
-     * @param k attenuation coefficent
+     * @param k attenuation coefficient
      * @return sum of the colors from the two secondary rays
      */
     private Color calcGlobalEffects(GeoPoint gp, Ray ray, int level, Double3 k) {
@@ -107,8 +131,8 @@ public class SimpleRayTracer extends RayTraceBase {
     /**
      * Calculates the global effect of reflection or refraction for a ray
      * @param ray in which to calculate global effect
-     * @param level current recurison level
-     * @param k     attenuation coeficient (global effect)
+     * @param level current recursion level
+     * @param k     attenuation coefficient (global effect)
      * @param kx    global effect * materials reflection or refraction coefficient
      * @return color of the global effect
      */
