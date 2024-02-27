@@ -6,6 +6,7 @@ import scene.*;
 import geometries.Intersectable.GeoPoint;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
@@ -35,7 +36,7 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     /***
-     *return the color of the closest point
+     *return the color of the pixel
      */
     @Override
     public Color traceRay(Ray ray) {
@@ -47,7 +48,7 @@ public class SimpleRayTracer extends RayTraceBase {
      * Get the color from ambient light and intensity
      * calls helper function to get global and local colors
      * @param gp intersection point
-     * @param ray
+     * @param ray center point of pixel that was hit
      * @returns color
      */
     private Color calcColor(GeoPoint gp, Ray ray) {
@@ -68,35 +69,10 @@ public class SimpleRayTracer extends RayTraceBase {
      * @return
      */
     private Color calcColor(GeoPoint gp, Ray ray, int level, Double3 k) {
-        //  Color color = gp.geometry.getEmission().add(calcLocalEffects(gp,ray,k));
-        Color color = calcLocalEffects(gp, ray, k);
+        Color color = calcLocalEffects(gp, ray, k); //calculates effects from light sources
         return 1 == level ? color : color.add(calcGlobalEffects(gp, ray, level, k));
     }
 
-    /**
-     * method to calculate the color when shooting multiple rays rather than just one.
-     * it will calculate the average of all the colors and return it
-     * @param level
-     * @param k
-     * @param kB
-     * @param rays
-     * @return the avg of the colors
-     */
-    private Color calcRayBeamColor(int level, Double3 k, Double3 kB, List<Ray> rays) {
-        if (rays.size() == 1) {
-            return calcGlobalEffects(rays.get(0), level, k, kB);
-        }
-        Color color = Color.BLACK;
-        int size = 0;
-        for (Ray rT : rays) {
-            color = color.add(calcGlobalEffects(rT, level, k, kB));
-            size++;
-        }
-
-        if (size == 0)
-            return color;
-        return color.reduce((int) size); //this was double before
-    }
     /***
      * calculates global effects
      * recursively traces the rays to determine the overall color
@@ -119,15 +95,44 @@ public class SimpleRayTracer extends RayTraceBase {
         Double3 kkt = k.product(mat.kT); //attenuation factor * transparency coefficient
 
         if (!(kkr.lowerThan(MIN_CALC_COLOR_K))) //send the reflection if kkr > min_color
-            color = color.add(calcGlobalEffects(constructReflectedRay(ray, gp, norm), level, mat.kR, kkr));
+        //  color = color.add(calcGlobalEffects(constructReflectedRay(ray, gp, norm), level, mat.kR, kkr));
+            color = color.add(calcRayBeamColor(constructMultReflectedRays(gp, ray.getDirection(), norm), level, mat.kR, kkr));
 
         if (!(kkt.lowerThan(MIN_CALC_COLOR_K))) //send the transparency if kkt > min_color
-            color = color.add(calcGlobalEffects(constructRefractedRay(gp, ray, norm), level, mat.kT, kkt));
+            //color = color.add(calcGlobalEffects(constructRefractedRay(gp, ray, norm), level, mat.kT, kkt));
+            color = color.add(calcRayBeamColor(constructMultRefractedRays(gp, ray.getDirection(), norm), level, mat.kT, kkt));
+
+
+//        return calcRayBeamColor(level, k, kR, constructReflectedRays(gp, v, n, material.kG))
+//                .add(calcRayBeamColor(level, k, kT, constructRefractedRays(gp, v, n, material.kB)));
 
         return color;
 
     }
 
+    /**
+     * method to calculate the color when shooting multiple rays rather than just one.
+     * it will calculate the average of all the colors and return it
+     * @param level
+     * @param k material.kR or material.kT
+     * @param kk attenuation * transparency or atteunation * reflection
+     * @param rays
+     * @return the avg of the colors
+     */
+    private Color calcRayBeamColor(List<Ray> rays, int level, Double3 k ,Double3 kk) {
+        if (rays.size() == 1) { //if we are not doing antialiasing
+            return calcGlobalEffects(rays.getFirst(), level, k, kk );
+        }
+        Color color = Color.BLACK;
+        int size = 0;
+        for (Ray ray : rays) { //calculate color of each ray hit
+            color = color.add(calcGlobalEffects(ray, level, k, kk));
+            size++;
+        }
+        if (size == 0)
+            return color;
+        return color.reduce((int) size); //this was double before
+    }
     /**
      * Calculates the global effect of reflection or refraction for a ray
      * @param ray in which to calculate global effect
@@ -135,6 +140,9 @@ public class SimpleRayTracer extends RayTraceBase {
      * @param k     attenuation coefficient (global effect)
      * @param kx    global effect * materials reflection or refraction coefficient
      * @return color of the global effect
+     *
+     *
+
      */
     private Color calcGlobalEffects(Ray ray, int level, Double3 k, Double3 kx) {
         GeoPoint gp = findClosestIntersection(ray);
@@ -197,19 +205,39 @@ public class SimpleRayTracer extends RayTraceBase {
     /**
      * Method that constructs a reflected ray
      * direction vector = 𝒗 −(𝟐 * (𝒗 dot 𝒏) * n)
-     * @param ray    Ray
      * @param gp     Point
+     * @param dir    Vector
      * @param normal Vector
      * @return constructs a reflection ray
      */
-    private Ray constructReflectedRay(Ray ray, GeoPoint gp, Vector normal) {
-        Vector v = ray.getDirection();
-        double vn = alignZero(v.dotProduct(normal));
+    private Ray constructReflectedRay(GeoPoint gp, Vector dir, Vector normal) {
+        double vn = alignZero(dir.dotProduct(normal));
         // If the dot product of v and n is zero, the incident vector is parallel to the surface normal
         if (vn == 0) { //there is no reflection
             return null;
         }
-        return new Ray(gp.point, v.subtract(normal.scale(2 * vn)), normal);
+        return new Ray(gp.point, dir.subtract(normal.scale(2 * vn)), normal);
+    }
+
+    /**
+     *
+     * @param gp
+     * @param dir direction
+     * @param n normal
+     * @return
+     */
+    private List<Ray> constructMultReflectedRays(GeoPoint gp, Vector dir, Vector n)
+    {
+        Ray rfRay = constructReflectedRay(gp, dir, n);
+        if (rfRay == null)
+        {
+
+        }
+        double res = rfRay.getDirection().dotProduct(n);
+        return new Pixel(rfRay).constructRayBeamGrid().stream().filter(r -> r.getDirection()
+                .dotProduct(n) * res > 0).
+                collect(Collectors.toList());
+
     }
 
     /**
@@ -217,13 +245,30 @@ public class SimpleRayTracer extends RayTraceBase {
      * for our implementation refraction index is 1
      *
      * @param gp     Point
-     * @param ray    Ray
+     * @param direction vector
      * @param normal Vector
      * @return
      */
-    private Ray constructRefractedRay(GeoPoint gp, Ray ray, Vector normal) {
+    private Ray constructRefractedRay(GeoPoint gp, Vector direction, Vector normal) {
         // ray = direction vector because they will have the same n1 and n2
-        return new Ray(gp.point, ray.direction, normal);
+        return new Ray(gp.point, direction, normal);
+    }
+
+    /**
+     *
+     * @param gp
+     * @param dir direction of the main ray
+     * @param n normal
+     * @return list of rays
+     */
+    private List<Ray> constructMultRefractedRays(GeoPoint gp, Vector dir, Vector n)
+    {
+        Ray refractedRay = constructRefractedRay(gp, dir, n);
+        double resolution = refractedRay.getDirection().dotProduct(n);
+        return new Pixel(refractedRay).constructRayBeamGrid().stream().
+                filter(r->r.getDirection().dotProduct(n) * resolution > 0)
+                .collect(Collectors.toList());
+
     }
 
     /**

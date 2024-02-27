@@ -24,6 +24,8 @@ public class Camera implements java.lang.Cloneable  {
     double height;
     double distance;
 
+    Pixel pixel;
+
     private static ImageWriter imageWriter;
     private RayTraceBase rayTracer; //should this be changed
 
@@ -82,23 +84,8 @@ public class Camera implements java.lang.Cloneable  {
      * @return the constructed ray
      */
     public Ray constructRay(int nX, int nY, int j, int i) {
-       //find the center of the view plane
-        Point pIJ = p0.add(vTo.scale(distance));
-
-        //Find the offset on the view plane
-        //offset is the size of the pixel
-        // height/nY = ratio on Y axis
-        // width/nX = ratio on X axis
-        double offsetY = (-(i-(nY - 1) / 2.0)) * (height / nY);
-        double offsetX = (((nX - 1) / 2.0)-j) * (width / nX);
-
-        // Apply the offsets to the view plane to get the final point
-        // find distance to move for each pixel
-        if (!isZero(offsetX))
-            pIJ = pIJ.add(vRight.scale(offsetX));
-        if (!isZero(offsetY))
-            pIJ = pIJ.add(vUp.scale(offsetY));
-        return new Ray(p0, pIJ.subtract(p0));
+        return pixel.constructRay(nX, nY, j, i); //construct the center Ray from Pixel class
+        //changed this to be in the pixel class for RDD and DRY
 
     }
 

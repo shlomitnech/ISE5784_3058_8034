@@ -13,9 +13,14 @@ import static primitives.Util.isZero;
  * 
  *
  */
-public class Pixel {
+public class Pixel extends Camera {
 
     private static final int GRIDSIZE = 3;
+
+    public Pixel(Ray refractedRay) {
+
+
+    }
 
     //same method from Camera class
     public Ray constructRay(int nX, int nY, int j, int i) {
@@ -26,8 +31,8 @@ public class Pixel {
         //offset is the size of the pixel
         // height/nY = ratio on Y axis
         // width/nX = ratio on X axis
-        double offsetY = (-(i-(nY - 1) / 2.0)) * (height / nY);
-        double offsetX = (((nX - 1) / 2.0)-j) * (width / nX);
+        double offsetY = (-(i - (nY - 1) / 2.0)) * (height / nY);
+        double offsetX = (((nX - 1) / 2.0) - j) * (width / nX);
 
         // Apply the offsets to the view plane to get the final point
         // find distance to move for each pixel
@@ -42,6 +47,7 @@ public class Pixel {
     /**
      * alternative to constructRay; instead of shooting just one beam,
      * we are shooting a grid of beams of dimension DENSITY X DENSITY
+     *
      * @return the list of rays
      */
     public List<Ray> constructRayBeamGrid() {
@@ -50,4 +56,5 @@ public class Pixel {
             for (int j = 0; j < GRIDSIZE; j++)
                 rays.add(constructRay(GRIDSIZE, GRIDSIZE, j, i));
         return rays;
+    }
 }
