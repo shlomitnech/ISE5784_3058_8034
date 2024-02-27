@@ -17,7 +17,7 @@ public class Pixel extends Camera {
 
     private static final int GRIDSIZE = 3;
 
-    public Pixel(Ray refractedRay) {
+    public Pixel(Ray ray) {
 
 
     }
