@@ -8,6 +8,8 @@ import static primitives.Util.isZero;
 
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.lang.Cloneable;
 
@@ -24,11 +26,9 @@ public class Camera implements java.lang.Cloneable  {
     double height;
     double distance;
 
-    Pixel pixel;
-
     private static ImageWriter imageWriter;
     private RayTraceBase rayTracer; //should this be changed
-
+    private static final int GRIDSIZE = 100;
     /**
      * empty constructor for camera
      */
@@ -84,15 +84,31 @@ public class Camera implements java.lang.Cloneable  {
      * @return the constructed ray
      */
     public Ray constructRay(int nX, int nY, int j, int i) {
-        return pixel.constructRay(nX, nY, j, i); //construct the center Ray from Pixel class
-        //changed this to be in the pixel class for RDD and DRY
+        //find the center of the view plane
+        Point pIJ = p0.add(vTo.scale(distance));
+
+        //Find the offset on the view plane
+        //offset is the size of the pixel
+        // height/nY = ratio on Y axis
+        // width/nX = ratio on X axis
+        double offsetY = (-(i-(nY - 1) / 2.0)) * (height / nY);
+        double offsetX = (((nX - 1) / 2.0)-j) * (width / nX);
+
+        // Apply the offsets to the view plane to get the final point
+        // find distance to move for each pixel
+        if (!isZero(offsetX))
+            pIJ = pIJ.add(vRight.scale(offsetX));
+        if (!isZero(offsetY))
+            pIJ = pIJ.add(vUp.scale(offsetY));
+        return new Ray(p0, pIJ.subtract(p0));
+
 
     }
 
     /**
      * casts a ray through every pixel of image writer and colors that pixel
      */
-    public void renderImage(){
+    public void renderImage(){ //changed from return void
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
@@ -101,7 +117,7 @@ public class Camera implements java.lang.Cloneable  {
 
         for (int i = 0; i < nY; ++i)
             for (int j = 0; j < nX; j++)
-                imageWriter.writePixel(j, i, castRay(j, i)); //check if intersection of geometries at each pixel
+                imageWriter.writePixel(j, i, castRays(j, i)); //check if intersection of geometries at each pixel
     }
 
     /**
@@ -140,6 +156,46 @@ public class Camera implements java.lang.Cloneable  {
      */
     private Color castRay(int j, int i) {
         return rayTracer.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
+
+    }
+
+    private Color castRays(int j, int i) {
+        List<Ray> rays = constructRayBeamGrid(imageWriter.getNx(), imageWriter.getNy(), j, i); // Construct multiple rays through each pixel
+        Color totalColor = Color.BLACK; // Initialize total color to accumulate colors from multiple rays
+        for (Ray ray : rays) {
+            totalColor = totalColor.add(rayTracer.traceRay(ray)); // Trace each ray and accumulate colors
+        }
+        // Return the average color obtained from tracing multiple rays
+        return totalColor.reduce((int) rays.size()); //this was double before
+    }
+    public List<Ray> constructRayBeamGrid(int nX, int nY, int j, int i) {
+        List<Ray> rays = new LinkedList<>();
+        double pixelWidth = width / nX; // Width of each pixel
+        double pixelHeight = height / nY; // Height of each pixel
+
+        // Calculate the starting point of the pixel
+        double startX = -width / 2 + pixelWidth * j;
+        double startY = height / 2 - pixelHeight * i;
+
+        // Calculate the step size for each sub-pixel
+        double stepX = pixelWidth / GRIDSIZE;
+        double stepY = pixelHeight / GRIDSIZE;
+
+        // Iterate over the sub-pixels in the current pixel
+        for (int row = 0; row < GRIDSIZE; row++) {
+            for (int col = 0; col < GRIDSIZE; col++) {
+                // Calculate the coordinates of the sub-pixel
+                double x = startX + stepX * col + stepX / 2;
+                double y = startY - stepY * row - stepY / 2; // Negative because Y-axis is inverted in image space
+
+                // Construct the ray passing through the sub-pixel
+                Point pIJ = p0.add(vTo.scale(distance)); // Center of the view plane
+                pIJ = pIJ.add(vRight.scale(-x)); // Apply offset along the X-axis (inverted direction)
+                pIJ = pIJ.add(vUp.scale(y)); // Apply offset along the Y-axis
+                rays.add(new Ray(p0, pIJ.subtract(p0))); // Construct and add the ray
+            }
+        }
+        return rays;
     }
 
     /**
