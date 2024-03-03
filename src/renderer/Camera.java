@@ -28,7 +28,7 @@ public class Camera implements java.lang.Cloneable  {
 
     private static ImageWriter imageWriter;
     private RayTraceBase rayTracer; //should this be changed
-    private static final int GRIDSIZE = 100;
+    private static final int GRIDSIZE = 3;
     /**
      * empty constructor for camera
      */

@@ -5,6 +5,7 @@ package unittests.renderer;
 
 import static java.awt.Color.*;
 
+import lighting.DirectionalLight;
 import lighting.PointLight;
 import org.junit.jupiter.api.Test;
 
@@ -106,19 +107,56 @@ public class ReflectionRefractionTests {
     @Test
     public void test1() throws CloneNotSupportedException {
         scene.geometries.add(
+                //top sphere
                 new Sphere(new Point(0, 0, -10), 15d).setEmission(new Color(102,97,255))
                         .setMaterial(new Material().setKd(0.5).setKs(0.5).setShininess(100)),
+                //middle sphere
                 new Sphere(new Point(0, -20, -20), 20d).setEmission(new Color(78,73,222))
                         .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
+                //bottom sphere
                 new Sphere(new Point(0, -50, -30), 30d).setEmission(new Color(60,57,178))
-                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.5)));
+                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
+                //left eye
+                new Sphere(new Point(-8, 5, 5), 2d).setEmission(new Color(BLACK))
+                        .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
+                //right eye
+                new Sphere(new Point(5, 5,5), 2d).setEmission(new Color(BLACK))
+                        .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
+                //sun
+                new Sphere(new Point(-250, 250, -3000), 100d).setEmission(new Color(YELLOW))
+                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.7)));
         scene.geometries.add(
-                new Triangle(new Point(-5, 15, -10), new Point(5, 15, -10), new Point(0, 20, -10))
+                //top nose
+                new Triangle(new Point(-5, 0, 5), new Point(1, 0,5), new Point(-4, -5, 30))
                         .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(RED)),
-                new Triangle(new Point(0, -200, -115), new Point(-70, 40, -140), new Point(75, 50, -150))
-                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(GRAY)));
+                //bottom nose
+                new Triangle(new Point(-5, -2, 5), new Point(1, -2,5), new Point(-4, -5, 30))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(RED)),
+                //right side nose
+                new Triangle(new Point(1, 0,5), new Point(1, -2,5), new Point(-4, -5, 30))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(RED)),
+                //left side nose
+                new Triangle(new Point(-5, 0, 5), new Point(-5,-2,5), new Point(-4, -5, 30))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(RED)),
+                //left arm
+                new Triangle(new Point(-20,-18,-20), new Point(-20,-22,-20), new Point(-50,-15, 30))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(64, 52, 34)),
+                //right arm
+                new Triangle(new Point(20,-18,-20), new Point(20,-22,-20), new Point(50,-15, 30))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(64, 52, 34)),
+                //mirror
+                new Triangle(new Point(-75,25,500), new Point(-20,30,-200), new Point(-50,-100, 100))
+                        .setEmission(new Color(20, 20, 20))
+                        .setMaterial(new Material().setkR(.8)),
+                //snow
+                new Triangle(new Point(-80, -220, -115), new Point(-120, 0, -140), new Point(200, 10, -150))
+                        .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(240,240,240)));
         scene.lights.add(
-                new SpotLight(new Color(700, 400, 400), new Point(-100, -100, 500), new Vector(-1, -1, -2))
+                  new DirectionalLight(new Color(YELLOW), new Vector(2,-6,2)));
+        scene.lights.add(
+                new PointLight(new Color(230, 145, 60), new Point(100, 100, 2000)));
+        scene.lights.add(
+                new SpotLight(new Color(700, 400, 400), new Point(-100, -100, 2000), new Vector(3, 1, -4))
                         .setKl(0.0004).setKq(0.0000006));
         scene.setBackground(new Color(128, 255 , 243)); //sky blue
         cameraBuilder.setLocation(new Point(0, 0, 1000)).setVpDistance(1000)

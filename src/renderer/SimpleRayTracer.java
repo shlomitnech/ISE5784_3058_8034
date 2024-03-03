@@ -43,26 +43,26 @@ public class SimpleRayTracer extends RayTraceBase {
         return closestPoint == null ? scene.background : calcColor(closestPoint, ray);
     }
 
-    public Color traceRays(List<Ray> rays) {
-        if (rays.size() == 1) { //if we are not doing antialiasing
-            Ray r = rays.getFirst();
-            GeoPoint closestPoint = findClosestIntersection(r); //return the closest GeoPoint that the ray hits
-            return closestPoint == null ? scene.background : calcColor(closestPoint, r);
-        }
-        Color c = Color.BLACK;
-        if (rays.isEmpty())
-            return c;
-        //we are doing antialiasing
-        for (Ray r : rays)
-        {
-            GeoPoint closestPoint = findClosestIntersection(r); //return the closest GeoPoint that the ray hi
-            if (closestPoint== null)
-                c = c.add(scene.background);
-            else
-                c = c.add(calcColor(closestPoint, r));
-        }
-        return c.reduce(rays.size()); //this was double before
-    }
+//    public Color traceRays(List<Ray> rays) {
+//        if (rays.size() == 1) { //if we are not doing antialiasing
+//            Ray r = rays.getFirst();
+//            GeoPoint closestPoint = findClosestIntersection(r); //return the closest GeoPoint that the ray hits
+//            return closestPoint == null ? scene.background : calcColor(closestPoint, r);
+//        }
+//        Color c = Color.BLACK;
+//        if (rays.isEmpty())
+//            return c;
+//        //we are doing antialiasing
+//        for (Ray r : rays)
+//        {
+//            GeoPoint closestPoint = findClosestIntersection(r); //return the closest GeoPoint that the ray hi
+//            if (closestPoint== null)
+//                c = c.add(scene.background);
+//            else
+//                c = c.add(calcColor(closestPoint, r));
+//        }
+//        return c.reduce(rays.size()); //this was double before
+//    }
 
 
     /***
