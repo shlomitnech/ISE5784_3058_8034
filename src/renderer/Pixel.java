@@ -15,11 +15,12 @@ import static primitives.Util.isZero;
  */
 public class Pixel extends Camera {
 
+
     private static final int GRIDSIZE = 3;
 
     public Pixel(Ray refractedRay) {
-
-
+        super();
+        this.p0 = refractedRay.getHead();
     }
 
     //same method from Camera class
