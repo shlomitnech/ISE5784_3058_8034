@@ -124,7 +124,7 @@ public class ReflectionRefractionTests {
                         .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
                 //sun
                 new Sphere(new Point(-250, 250, -3000), 100d).setEmission(new Color(YELLOW))
-                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.7)));
+                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(1)));
         scene.geometries.add(
                 //top nose
                 new Triangle(new Point(-5, 0, 5), new Point(1, 0,5), new Point(-4, -5, 30))
@@ -151,13 +151,17 @@ public class ReflectionRefractionTests {
                 //snow
                 new Triangle(new Point(-80, -220, -115), new Point(-120, 0, -140), new Point(200, 10, -150))
                         .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(240,240,240)));
-        scene.lights.add(
-                  new DirectionalLight(new Color(YELLOW), new Vector(2,-6,2)));
+       // scene.lights.add(
+        //         new DirectionalLight(new Color(YELLOW), new Vector(2,-6,2)));
         scene.lights.add(
                 new PointLight(new Color(230, 145, 60), new Point(100, 100, 2000)));
         scene.lights.add(
                 new SpotLight(new Color(700, 400, 400), new Point(-100, -100, 2000), new Vector(3, 1, -4))
                         .setKl(0.0004).setKq(0.0000006));
+        //light for the sun
+        scene.lights.add(
+                new PointLight(new Color(YELLOW), new Point(-250, 250, -3000)));
+
         scene.setBackground(new Color(128, 255 , 243)); //sky blue
         cameraBuilder.setLocation(new Point(0, 0, 1000)).setVpDistance(1000)
                 .setVpSize(150, 150)
