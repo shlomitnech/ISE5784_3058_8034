@@ -124,7 +124,7 @@ public class ReflectionRefractionTests {
                         .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
                 //sun
                 new Sphere(new Point(-250, 250, -3000), 100d).setEmission(new Color(YELLOW))
-                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(1)));
+                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(.65)));
         scene.geometries.add(
                 //top nose
                 new Triangle(new Point(-5, 0, 5), new Point(1, 0,5), new Point(-4, -5, 30))
