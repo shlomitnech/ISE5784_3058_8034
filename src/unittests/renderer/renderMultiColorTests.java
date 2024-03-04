@@ -16,6 +16,7 @@ import scene.Scene;
  * @author Dan
  */
 public class renderMultiColorTests {
+    int GRIDSIZE = 9;
     /** Scene of the tests */
     private final Scene          scene  = new Scene("Test scene");
     /** Camera builder of the tests */
@@ -45,7 +46,7 @@ public class renderMultiColorTests {
         camera
                 .setImageWriter(new ImageWriter("base render test", 1000, 1000))
                 .build()
-                .renderImage();
+                .renderImage(3);
         camera.build().printGrid(100, new Color(YELLOW));
         camera.build().writeToImage();
     }
@@ -75,7 +76,7 @@ public class renderMultiColorTests {
         camera
                 .setImageWriter(new ImageWriter("color render test", 1000, 1000))
                 .build()
-                .renderImage();
+                .renderImage(GRIDSIZE);
         camera.build().printGrid(100, new Color(WHITE));
         camera.build().writeToImage();
     }

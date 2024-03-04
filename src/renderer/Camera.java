@@ -28,7 +28,7 @@ public class Camera implements java.lang.Cloneable  {
 
     private static ImageWriter imageWriter;
     private RayTraceBase rayTracer; //should this be changed
-    private static final int GRIDSIZE = 3;
+
     /**
      * empty constructor for camera
      */
@@ -108,7 +108,7 @@ public class Camera implements java.lang.Cloneable  {
     /**
      * casts a ray through every pixel of image writer and colors that pixel
      */
-    public void renderImage(){ //changed from return void
+    public void renderImage(int GRIDSIZE){ //changed from return void
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
@@ -117,7 +117,7 @@ public class Camera implements java.lang.Cloneable  {
 
         for (int i = 0; i < nY; ++i)
             for (int j = 0; j < nX; j++)
-                imageWriter.writePixel(j, i, castRays(j, i)); //check if intersection of geometries at each pixel
+                imageWriter.writePixel(j, i, castRays(j, i, GRIDSIZE)); //check if intersection of geometries at each pixel
     }
 
     /**
@@ -159,8 +159,8 @@ public class Camera implements java.lang.Cloneable  {
 
     }
 
-    private Color castRays(int j, int i) {
-        List<Ray> rays = constructRayBeamGrid(imageWriter.getNx(), imageWriter.getNy(), j, i); // Construct multiple rays through each pixel
+    private Color castRays(int j, int i, int GRIDSIZE) {
+        List<Ray> rays = constructRayBeamGrid(imageWriter.getNx(), imageWriter.getNy(), j, i, GRIDSIZE); // Construct multiple rays through each pixel
         Color totalColor = Color.BLACK; // Initialize total color to accumulate colors from multiple rays
         for (Ray ray : rays) {
             totalColor = totalColor.add(rayTracer.traceRay(ray)); // Trace each ray and accumulate colors
@@ -168,7 +168,7 @@ public class Camera implements java.lang.Cloneable  {
         // Return the average color obtained from tracing multiple rays
         return totalColor.reduce((int) rays.size()); //this was double before
     }
-    public List<Ray> constructRayBeamGrid(int nX, int nY, int j, int i) {
+    public List<Ray> constructRayBeamGrid(int nX, int nY, int j, int i, int GRIDSIZE) {
         List<Ray> rays = new LinkedList<>();
         double pixelWidth = width / nX; // Width of each pixel
         double pixelHeight = height / nY; // Height of each pixel
