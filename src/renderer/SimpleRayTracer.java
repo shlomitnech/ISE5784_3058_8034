@@ -8,16 +8,20 @@ import geometries.Intersectable.GeoPoint;
 import java.util.List;
 
 import static primitives.Util.alignZero;
-import static primitives.Util.isZero;
 
 public class SimpleRayTracer extends RayTraceBase {
 
+    //recursion stop condition
     private static final int MAX_CALC_COLOR_LEVEL = 10;
+
+    //recursive stopping condition based on accumulative value of the reduction coefficient k
     private static final double MIN_CALC_COLOR_K = 0.001;
     private static final Double3 INITIAL_K = new Double3(1.0);
 
+    //constant field for the amount that we want to move the ray’s head
     private static final double DELTA = 0.1;
 
+    //constructor for simple ray tracer
     public SimpleRayTracer(Scene s) {
         super(s);
     }
@@ -96,7 +100,7 @@ public class SimpleRayTracer extends RayTraceBase {
     }
 
     /***
-     * calculates gobal effects
+     * calculates global effects
      * recursively traces the rays to determine the overall color
      *
      * @param gp intersection pt with geometry
@@ -142,7 +146,7 @@ public class SimpleRayTracer extends RayTraceBase {
     /**
      * @param gp
      * @param ray
-     * @return
+     * @return color calculated taking into account local effects
      */
     private Color calcLocalEffects(GeoPoint gp, Ray ray, Double3 k) {
         Color color = gp.geometry.getEmission();
@@ -173,7 +177,7 @@ public class SimpleRayTracer extends RayTraceBase {
     /**
      * @param mat
      * @param nl
-     * @return
+     * @return Double3
      */
     private Double3 calcDiffusive(Material mat, double nl) {
         return mat.Kd.scale(nl);

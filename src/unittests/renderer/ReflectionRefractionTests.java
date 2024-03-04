@@ -106,7 +106,7 @@ public class ReflectionRefractionTests {
 
     @Test
     public void test1() throws CloneNotSupportedException {
-        int GRIDSIZE = 3;
+        int GRIDSIZE = 9;
         scene.geometries.add(
                 //top sphere
                 new Sphere(new Point(0, 0, -10), 15d).setEmission(new Color(GRAY))
