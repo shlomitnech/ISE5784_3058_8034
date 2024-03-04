@@ -101,8 +101,6 @@ public class Camera implements java.lang.Cloneable  {
         if (!isZero(offsetY))
             pIJ = pIJ.add(vUp.scale(offsetY));
         return new Ray(p0, pIJ.subtract(p0));
-
-
     }
 
     /**
@@ -150,15 +148,21 @@ public class Camera implements java.lang.Cloneable  {
         imageWriter.writeToImage();
     }
 
+//    /**
+//     * receives the resolution and the pixel number
+//     *
+//     */
+////    private Color castRay(int j, int i) {
+////        return rayTracer.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
+////
+////    }
+
     /**
-     * receives the resolution and the pixel number
-     *
+     * Casts all the rays at each pixel to the geometries and returns the average color at that pixel
+     * @param j
+     * @param i
+     * @param GRIDSIZE = how many rays Gridsize x gridsize in each pixel
      */
-    private Color castRay(int j, int i) {
-        return rayTracer.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
-
-    }
-
     private Color castRays(int j, int i, int GRIDSIZE) {
         List<Ray> rays = constructRayBeamGrid(imageWriter.getNx(), imageWriter.getNy(), j, i, GRIDSIZE); // Construct multiple rays through each pixel
         Color totalColor = Color.BLACK; // Initialize total color to accumulate colors from multiple rays
@@ -205,8 +209,6 @@ public class Camera implements java.lang.Cloneable  {
     public static Builder getBuilder(){
         return new Builder();
     }
-
-
     /**
      * Nested Builder class - design pattern in Camera
      */
