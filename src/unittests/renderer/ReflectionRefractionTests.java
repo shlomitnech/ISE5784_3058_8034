@@ -146,7 +146,7 @@ public class ReflectionRefractionTests {
                         .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(64, 52, 34)),
                 //mirror
                 new Triangle(new Point(-75,25,500), new Point(-20,30,-200), new Point(-50,-100, 100))
-                        .setEmission(new Color(20, 20, 20))
+                       .setEmission(new Color(20, 20, 20))
                         .setMaterial(new Material().setkR(.8)),
                 //snow
                 new Triangle(new Point(-80, -220, -115), new Point(-120, 0, -140), new Point(200, 10, -150))
@@ -154,7 +154,7 @@ public class ReflectionRefractionTests {
        // scene.lights.add(
         //         new DirectionalLight(new Color(YELLOW), new Vector(2,-6,2)));
         scene.lights.add(
-                new PointLight(new Color(230, 145, 60), new Point(100, 100, 2000)));
+                new PointLight(new Color(RED), new Point(1, 1, 1)));
         scene.lights.add(
                 new SpotLight(new Color(700, 400, 400), new Point(-100, -100, 2000), new Vector(3, 1, -4))
                         .setKl(0.0004).setKq(0.0000006));
