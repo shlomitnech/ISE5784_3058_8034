@@ -109,48 +109,46 @@ public class Camera implements java.lang.Cloneable  {
     /**
      * casts a ray through every pixel of image writer and colors that pixel
      */
-    public void renderImage(int GRIDSIZE){
+    public void renderImage(int GRIDSIZE, boolean thread){
+
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
-
         int nY = imageWriter.getNy(); //Maximum Rows
         int nX = imageWriter.getNx(); //Maximum Columns
+        if(!thread) {
+            for (int i = 0; i < nY; ++i)
+                for (int j = 0; j < nX; j++)
+                    imageWriter.writePixel(j, i, castRays(j, i, GRIDSIZE)); //check if intersection of geometries at each pixel
+        }
+        else {
+            int threadsCount = 5; // Runtime.getRuntime().availableProcessors(); // Number of available processor cores
 
-        for (int i = 0; i < nY; ++i)
-            for (int j = 0; j < nX; j++)
-                imageWriter.writePixel(j, i, castRays(j, i, GRIDSIZE)); //check if intersection of geometries at each pixel
+            // Create a thread pool with the number of threads
+            ExecutorService executor = Executors.newFixedThreadPool(threadsCount);
+
+            // Submit tasks for each row of pixels
+            for (int i = 0; i < nY; i++) {
+                final int row = i;
+                executor.submit(() -> {
+                    for (int j = 0; j < nX; j++) {
+                        imageWriter.writePixel(j, row, castRays(j, row, GRIDSIZE));
+                    }
+                });
+            }
+            // Shut down the executor
+            executor.shutdown();
+            // Wait for all tasks to finish
+            try {
+                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
     }
-//    public void renderImage(int GRIDSIZE) {
-//        if (p0 == null || vTo == null || vUp == null || vRight == null || imageWriter == null || rayTracer == null) {
-//            throw new IllegalArgumentException("MissingResourcesException");
-//        }
-//
-//        int nY = imageWriter.getNy(); // Maximum Rows
-//        int nX = imageWriter.getNx(); // Maximum Columns
-//        int threadsCount = Runtime.getRuntime().availableProcessors(); // Number of available processor cores
-//
-//        // Create a thread pool with the number of threads
-//        ExecutorService executor = Executors.newFixedThreadPool(threadsCount);
-//
-//        // Submit tasks for each row of pixels
-//        for (int i = 0; i < nY; i++) {
-//            final int row = i;
-//            executor.submit(() -> {
-//                for (int j = 0; j < nX; j++) {
-//                    imageWriter.writePixel(j, row, castRays(j, row, GRIDSIZE));
-//                }
-//            });
-//        }
-//        // Shut down the executor
-//        executor.shutdown();
-//        // Wait for all tasks to finish
-//        try {
-//            executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
 
     /**
      * prints the grid over the image at the interval of pixels
