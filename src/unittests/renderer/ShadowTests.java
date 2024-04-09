@@ -53,7 +53,7 @@ public class ShadowTests {
         camera.setImageWriter(new ImageWriter(pictName, 400, 400))
 
                 .build();
-        camera.build().renderImage(3, false, 2); //
+        camera.build().renderImageReg(3, false); //
         camera.build().writeToImage();
     }
 

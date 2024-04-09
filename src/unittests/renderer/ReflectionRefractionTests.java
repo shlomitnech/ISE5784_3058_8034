@@ -21,6 +21,8 @@ import scene.Scene;
  * shadows
  * (with transparency)
  * @author dzilb */
+
+
 public class ReflectionRefractionTests {
     /** Scene for the tests */
     private final Scene          scene         = new Scene("Test scene");
@@ -45,7 +47,7 @@ public class ReflectionRefractionTests {
                 .setVpSize(150, 150)
                 .setImageWriter(new ImageWriter("refractionTwoSpheres", 500, 500))
                 .build();
-        cameraBuilder.build().renderImage(3, false, 10);
+        cameraBuilder.build().renderImageReg(3, false);
         cameraBuilder.build().writeToImage();
     }
 
@@ -74,7 +76,7 @@ public class ReflectionRefractionTests {
                 .setVpSize(2500, 2500)
                 .setImageWriter(new ImageWriter("reflectionTwoSpheresMirrored", 500, 500))
                 .build();
-        cameraBuilder.build().renderImage(3, false, 10);
+        cameraBuilder.build().renderImageReg(3, false);
         cameraBuilder.build().writeToImage();
     }
 
@@ -100,14 +102,15 @@ public class ReflectionRefractionTests {
                 .setVpSize(200, 200)
                 .setImageWriter(new ImageWriter("refractionShadow", 600, 600))
                 .build();
-        cameraBuilder.build().renderImage(3,false, 10);
+        cameraBuilder.build().renderImageReg(3,false);
         cameraBuilder.build().writeToImage();
     }
 
     @Test
     public void test1() throws CloneNotSupportedException {
-        int GRIDSIZE = 3;
+        int GRIDSIZE = 9;
         boolean thread = true;
+        boolean adaptiveSuperSampling = true;
         scene.geometries.add(
                 //top sphere
                 new Sphere(new Point(0, 0, -10), 15d).setEmission(new Color(GRAY))
@@ -169,7 +172,14 @@ public class ReflectionRefractionTests {
                 .setVpSize(150, 150)
                 .setImageWriter(new ImageWriter("snowMan", 500, 500))
                 .build();
-        cameraBuilder.build().renderImage(GRIDSIZE, thread, 2);
-        cameraBuilder.build().writeToImage();
+        if(!adaptiveSuperSampling){
+            cameraBuilder.build().renderImageReg(GRIDSIZE, thread);
+            cameraBuilder.build().writeToImage();
+        }
+        else{
+            cameraBuilder.build().renderImageAdaptive(GRIDSIZE, thread, 2);
+            cameraBuilder.build().writeToImage();
+        }
+
     }
 }
