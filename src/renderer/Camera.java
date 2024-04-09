@@ -4,10 +4,13 @@ import lighting.AmbientLight;
 import primitives.*;
 import primitives.Color;
 import primitives.Point;
+
+import static primitives.Util.alignZero;
 import static primitives.Util.isZero;
 
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.MissingResourceException;
@@ -109,7 +112,7 @@ public class Camera implements java.lang.Cloneable  {
     /**
      * casts a ray through every pixel of image writer and colors that pixel
      */
-    public void renderImage(int GRIDSIZE, boolean thread){
+    public void renderImage(int GRIDSIZE, boolean thread, int maxDepth){
 
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
@@ -118,8 +121,11 @@ public class Camera implements java.lang.Cloneable  {
         int nX = imageWriter.getNx(); //Maximum Columns
         if(!thread) {
             for (int i = 0; i < nY; ++i)
-                for (int j = 0; j < nX; j++)
-                    imageWriter.writePixel(j, i, castRays(j, i, GRIDSIZE)); //check if intersection of geometries at each pixel
+                for (int j = 0; j < nX; j++){
+                    Color color = castRays(j, i, GRIDSIZE);
+                    imageWriter.writePixel(j, i, color);
+            imageWriter.writePixel(j, i, color);
+             }
         }
         else {
             int threadsCount = 5; // Runtime.getRuntime().availableProcessors(); // Number of available processor cores
@@ -132,7 +138,9 @@ public class Camera implements java.lang.Cloneable  {
                 final int row = i;
                 executor.submit(() -> {
                     for (int j = 0; j < nX; j++) {
-                        imageWriter.writePixel(j, row, castRays(j, row, GRIDSIZE));
+                        Color color = adaptiveSuperSampling(j, row, GRIDSIZE, maxDepth);
+                        imageWriter.writePixel(j, row, color);
+                      //  imageWriter.writePixel(j, row, castRays(j, row, GRIDSIZE));
                     }
                 });
             }
@@ -145,11 +153,65 @@ public class Camera implements java.lang.Cloneable  {
                 e.printStackTrace();
             }
         }
-
-
+    }
+    private Color adaptiveSuperSampling(int j, int i, int gridSize, int maxDepth) {
+        return adaptiveSuperSamplingRecursive(j, i, gridSize, maxDepth, 0);
     }
 
+    private Color adaptiveSuperSamplingRecursive(int j, int i, int gridSize, int depth, int currentDepth) {
+        if (currentDepth >= depth) {
+            return castRays(j, i, gridSize);
+        }
+        List<Color> subpixelColors = new ArrayList<>();
+        double pixelWidth = width / imageWriter.getNx(); // Width of each pixel
+        double pixelHeight = height / imageWriter.getNy(); // Height of each pixel
 
+        // Calculate the starting point of the pixel
+        double startX = -width / 2 + pixelWidth * j;
+        double startY = height / 2 - pixelHeight * i;
+
+        // Calculate the step size for each sub-pixel
+        double stepX = pixelWidth / gridSize;
+        double stepY = pixelHeight / gridSize;
+
+        // Iterate over the sub-pixels in the current pixel
+        for (int row = 0; row < gridSize; row++) {
+            for (int col = 0; col < gridSize; col++) {
+                // Calculate the coordinates of the sub-pixel
+                double x = startX + stepX * col + stepX / 2;
+                double y = startY - stepY * row - stepY / 2; // Negative because Y-axis is inverted in image space
+
+                // Construct the ray passing through the sub-pixel
+                Point pIJ = p0.add(vTo.scale(distance)); // Center of the view plane
+                pIJ = pIJ.add(vRight.scale(-x)); // Apply offset along the X-axis (inverted direction)
+                pIJ = pIJ.add(vUp.scale(y)); // Apply offset along the Y-axis
+                Ray ray = new Ray(p0, pIJ.subtract(p0));
+
+                // Trace the ray and accumulate colors
+                Color subpixelColor = rayTracer.traceRay(ray);
+                subpixelColors.add(subpixelColor);
+            }
+        }
+        // Check if the colors of all subpixels are sufficiently close to each other
+        boolean allSimilar = allColorsSimilar(subpixelColors);
+
+        // If all subpixels have similar colors or we reached the maximum depth, return the average color
+        if (allSimilar || currentDepth == depth) {
+            return averageColor(subpixelColors);
+        }
+
+        // Otherwise, recursively perform adaptive super-sampling on each subpixel
+        List<Color> newColors = new ArrayList<>();
+        for (int row = 0; row < gridSize; row++) {
+            for (int col = 0; col < gridSize; col++) {
+                int subpixelIndex = row * gridSize + col;
+                Color color = adaptiveSuperSamplingRecursive(j, i, gridSize, depth, currentDepth + 1);
+                newColors.add(color);
+            }
+        }
+        // Return the average color of the subpixels after further subdivision
+        return averageColor(newColors);
+    }
     /**
      * prints the grid over the image at the interval of pixels
      * @param interval = space between pixels
@@ -180,15 +242,6 @@ public class Camera implements java.lang.Cloneable  {
         imageWriter.writeToImage();
     }
 
-//    /**
-//     * receives the resolution and the pixel number
-//     *
-//     */
-////    private Color castRay(int j, int i) {
-////        return rayTracer.traceRay(constructRay(imageWriter.getNx(), imageWriter.getNy(), j, i));
-////
-////    }
-
     /**
      * Casts all the rays at each pixel to the geometries and returns the average color at that pixel
      * @param j
@@ -198,12 +251,15 @@ public class Camera implements java.lang.Cloneable  {
     private Color castRays(int j, int i, int GRIDSIZE) {
         List<Ray> rays = constructRayBeamGrid(imageWriter.getNx(), imageWriter.getNy(), j, i, GRIDSIZE); // Construct multiple rays through each pixel
         Color totalColor = Color.BLACK; // Initialize total color to accumulate colors from multiple rays
+
         for (Ray ray : rays) {
+
             totalColor = totalColor.add(rayTracer.traceRay(ray)); // Trace each ray and accumulate colors
         }
         // Return the average color obtained from tracing multiple rays
         return totalColor.reduce((int) rays.size()); //this was double before
     }
+
     public List<Ray> constructRayBeamGrid(int nX, int nY, int j, int i, int GRIDSIZE) {
         List<Ray> rays = new LinkedList<>();
         double pixelWidth = width / nX; // Width of each pixel
@@ -232,6 +288,24 @@ public class Camera implements java.lang.Cloneable  {
             }
         }
         return rays;
+    }
+    private boolean allColorsSimilar(List<Color> colors) {
+        // Compare each color with the first color
+        for (int i = 1; i < colors.size(); i++) {
+            if (!colors.get(i).equals(colors.getFirst())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Color averageColor(List<Color> colors) {
+        // Calculate the average color
+        Color totalColor = Color.BLACK;
+        for (Color color : colors) {
+            totalColor = totalColor.add(color);
+        }
+        return totalColor.reduce(colors.size());
     }
 
     /**

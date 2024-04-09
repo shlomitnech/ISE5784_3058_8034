@@ -45,7 +45,7 @@ public class ReflectionRefractionTests {
                 .setVpSize(150, 150)
                 .setImageWriter(new ImageWriter("refractionTwoSpheres", 500, 500))
                 .build();
-        cameraBuilder.build().renderImage(3, false);
+        cameraBuilder.build().renderImage(3, false, 10);
         cameraBuilder.build().writeToImage();
     }
 
@@ -74,7 +74,7 @@ public class ReflectionRefractionTests {
                 .setVpSize(2500, 2500)
                 .setImageWriter(new ImageWriter("reflectionTwoSpheresMirrored", 500, 500))
                 .build();
-        cameraBuilder.build().renderImage(3, false);
+        cameraBuilder.build().renderImage(3, false, 10);
         cameraBuilder.build().writeToImage();
     }
 
@@ -100,13 +100,13 @@ public class ReflectionRefractionTests {
                 .setVpSize(200, 200)
                 .setImageWriter(new ImageWriter("refractionShadow", 600, 600))
                 .build();
-        cameraBuilder.build().renderImage(3,false);
+        cameraBuilder.build().renderImage(3,false, 10);
         cameraBuilder.build().writeToImage();
     }
 
     @Test
     public void test1() throws CloneNotSupportedException {
-        int GRIDSIZE = 9;
+        int GRIDSIZE = 3;
         boolean thread = true;
         scene.geometries.add(
                 //top sphere
@@ -169,7 +169,7 @@ public class ReflectionRefractionTests {
                 .setVpSize(150, 150)
                 .setImageWriter(new ImageWriter("snowMan", 500, 500))
                 .build();
-        cameraBuilder.build().renderImage(GRIDSIZE, thread);
+        cameraBuilder.build().renderImage(GRIDSIZE, thread, 2);
         cameraBuilder.build().writeToImage();
     }
 }

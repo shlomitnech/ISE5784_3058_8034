@@ -46,7 +46,7 @@ public class renderMultiColorTests {
         camera
                 .setImageWriter(new ImageWriter("base render test", 1000, 1000))
                 .build()
-                .renderImage(3, false);
+                .renderImage(3, false, 10);
         camera.build().printGrid(100, new Color(YELLOW));
         camera.build().writeToImage();
     }
@@ -76,7 +76,7 @@ public class renderMultiColorTests {
         camera
                 .setImageWriter(new ImageWriter("color render test", 1000, 1000))
                 .build()
-                .renderImage(GRIDSIZE, false);
+                .renderImage(GRIDSIZE, false, 4);
         camera.build().printGrid(100, new Color(WHITE));
         camera.build().writeToImage();
     }
