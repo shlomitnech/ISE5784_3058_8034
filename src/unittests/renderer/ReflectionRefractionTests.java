@@ -108,9 +108,9 @@ public class ReflectionRefractionTests {
 
     @Test
     public void test1() throws CloneNotSupportedException {
-        int GRIDSIZE = 3;
-        boolean thread = true;
-        boolean adaptiveSuperSampling = false;
+        int GRIDSIZE = 9;
+        boolean thread = false;
+        boolean adaptiveSuperSampling = true;
         scene.geometries.add(
                 //top sphere
                 new Sphere(new Point(0, 0, -10), 15d).setEmission(new Color(GRAY))
@@ -127,12 +127,18 @@ public class ReflectionRefractionTests {
                 //right eye
                 new Sphere(new Point(5, 5,5), 2d).setEmission(new Color(BLACK))
                         .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
+                //cloud
+                new Sphere(new Point(10, 90,-500), 20d).setEmission(new Color(GRAY))
+                        .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3)),
+                new Sphere(new Point(30, 90,-490), 20d).setEmission(new Color(GRAY))
+                        .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(1)),
+                new Sphere(new Point(50, 90,-500), 20d).setEmission(new Color(GRAY))
+                        .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(.3)),
                 //sun
                 new Sphere(new Point(-250, 250, -3000), 100d).setEmission(new Color(YELLOW))
                 .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(.7)));
-                //cloud
-                new Sphere(new Point(0, 5,5), 2d).setEmission(new Color(BLACK))
-                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3));
+
+
 
 
 
@@ -163,8 +169,14 @@ public class ReflectionRefractionTests {
                 new Triangle(new Point(-80, -220, -115), new Point(-120, 0, -140), new Point(200, 10, -150))
                         .setMaterial(new Material().setKd(0.6).setKs(0.6).setShininess(60)).setEmission(new Color(196, 194, 194)));
         scene.lights.add(
-                // lue light shining behind the snowman
+                // blue light shining behind the snowman
                  new DirectionalLight(new Color(BLUE), new Vector(-3,-6,2)));
+        scene.lights.add(
+                // red light shining on the snowman
+                new DirectionalLight(new Color(RED), new Vector(3,-5,1)));
+        scene.lights.add(
+                // green light shining on the snowman
+                new DirectionalLight(new Color(GREEN), new Vector(3,5,2)));
         scene.lights.add(
                 //spot light shining towards the snowman (white)
                 new SpotLight(new Color(700, 400, 400), new Point(-100, -100, 2000), new Vector(3, 1, -4))
@@ -172,6 +184,17 @@ public class ReflectionRefractionTests {
         scene.lights.add(
                 //light for the sun
                 new PointLight(new Color(YELLOW), new Point(-250, 250, -3000)));
+//
+
+//        scene.lights.add(
+//                //light for left cloud sphere
+//                new PointLight(new Color(BLUE), new Point(10, 90,-500)));
+//        scene.lights.add(
+//                //light for middle cloud sphere
+//                new PointLight(new Color(WHITE), new Point(30, 90,-500)));
+//        scene.lights.add(
+//                //light for the right cloud sphere
+//                new PointLight(new Color(BLUE), new Point(50, 90,-500)));
 
         scene.setBackground(new Color(128, 255 , 243)); //sky blue
         cameraBuilder.setLocation(new Point(0, 0, 1000)).setVpDistance(1000)

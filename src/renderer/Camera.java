@@ -33,7 +33,7 @@ public class Camera implements java.lang.Cloneable  {
     double distance;
 
     private static ImageWriter imageWriter;
-    private RayTraceBase rayTracer; //should this be changed
+    private RayTraceBase rayTracer;
 
     /**
      * empty constructor for camera
@@ -114,40 +114,50 @@ public class Camera implements java.lang.Cloneable  {
      */
     public void renderImageAdaptive(int GRIDSIZE, boolean thread, int maxDepth){
 
+        // Check if all necessary resources are provided
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
-        int nY = imageWriter.getNy(); //Maximum Rows
-        int nX = imageWriter.getNx(); //Maximum Columns
-        if(!thread) {
-            for (int i = 0; i < nY; ++i)
-                for (int j = 0; j < nX; j++){
-                    Color color = castRays(j, i, GRIDSIZE);
-                    imageWriter.writePixel(j, i, color);
-            imageWriter.writePixel(j, i, color);
-             }
-        }
-        else {
-            int threadsCount = 5; // Runtime.getRuntime().availableProcessors(); // Number of available processor cores
 
-            // Create a thread pool with the number of threads
+        // Get the dimensions of the image
+        int nY = imageWriter.getNy(); // Maximum Rows
+        int nX = imageWriter.getNx(); // Maximum Columns
+
+        // If threading is disabled, perform rendering without multi-threading
+        if(!thread) {
+            for (int i = 0; i < nY; ++i) {
+                for (int j = 0; j < nX; j++) {
+                    // Cast rays for each pixel and retrieve the color
+                    Color color = castRays(j, i, GRIDSIZE);
+                    // Write the color to the corresponding pixel in the image
+                    imageWriter.writePixel(j, i, color);
+                }
+            }
+        }
+        // If threading is enabled, use multi-threading for rendering
+        else {
+            // Determine the number of threads to be used (here hardcoded as 5, can be obtained dynamically)
+            int threadsCount = 5; // Runtime.getRuntime().availableProcessors();
+
+            // Create a thread pool with the specified number of threads
             ExecutorService executor = Executors.newFixedThreadPool(threadsCount);
 
-            // Submit tasks for each row of pixels
+            // Submit rendering tasks for each row of pixels to the thread pool
             for (int i = 0; i < nY; i++) {
                 final int row = i;
                 executor.submit(() -> {
+                    // For each pixel in the row, perform adaptive super-sampling and retrieve the color
                     for (int j = 0; j < nX; j++) {
                         Color color = adaptiveSuperSampling(j, row, GRIDSIZE, maxDepth);
+                        // Write the color to the corresponding pixel in the image
                         imageWriter.writePixel(j, row, color);
-                      //  imageWriter.writePixel(j, row, castRays(j, row, GRIDSIZE));
                     }
                 });
             }
-            // Shut down the executor
+            // Shut down the executor after all tasks are submitted
             executor.shutdown();
-            // Wait for all tasks to finish
             try {
+                // Wait for all tasks to finish
                 executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -157,47 +167,78 @@ public class Camera implements java.lang.Cloneable  {
 
     public void renderImageReg(int GRIDSIZE, boolean thread){
 
+        // Check if all necessary resources are provided
         if(p0 == null || vTo == null || vUp == null|| vRight == null || imageWriter == null || rayTracer == null ) {
             throw new IllegalArgumentException("MissingResourcesException");
         }
-        int nY = imageWriter.getNy(); //Maximum Rows
-        int nX = imageWriter.getNx(); //Maximum Columns
-        if(!thread) {
-            for (int i = 0; i < nY; ++i)
-                for (int j = 0; j < nX; j++)
-                    imageWriter.writePixel(j, i, castRays(j, i, GRIDSIZE)); //check if intersection of geometries at each pixel
-        }
-        else {
-            int threadsCount = 5; // Runtime.getRuntime().availableProcessors(); // Number of available processor cores
 
-            // Create a thread pool with the number of threads
+        // Get the dimensions of the image
+        int nY = imageWriter.getNy(); // Maximum Rows
+        int nX = imageWriter.getNx(); // Maximum Columns
+
+        // If threading is disabled, perform rendering without multi-threading
+        if(!thread) {
+            for (int i = 0; i < nY; ++i) {
+                for (int j = 0; j < nX; j++) {
+                    // Cast rays for each pixel and retrieve the color
+                    Color color = castRays(j, i, GRIDSIZE);
+                    // Write the color to the corresponding pixel in the image
+                    imageWriter.writePixel(j, i, color);
+                }
+            }
+        }
+        // If threading is enabled, use multi-threading for rendering
+        else {
+            // Determine the number of threads to be used (here hardcoded as 5, can be obtained dynamically)
+            int threadsCount = 5; // Runtime.getRuntime().availableProcessors();
+
+            // Create a thread pool with the specified number of threads
             ExecutorService executor = Executors.newFixedThreadPool(threadsCount);
 
-            // Submit tasks for each row of pixels
+            // Submit rendering tasks for each row of pixels to the thread pool
             for (int i = 0; i < nY; i++) {
                 final int row = i;
                 executor.submit(() -> {
+                    // For each pixel in the row, cast rays and retrieve the color
                     for (int j = 0; j < nX; j++) {
-                        imageWriter.writePixel(j, row, castRays(j, row, GRIDSIZE));
+                        Color color = castRays(j, row, GRIDSIZE);
+                        // Write the color to the corresponding pixel in the image
+                        imageWriter.writePixel(j, row, color);
                     }
                 });
             }
-            // Shut down the executor
+            // Shut down the executor after all tasks are submitted
             executor.shutdown();
-            // Wait for all tasks to finish
             try {
+                // Wait for all tasks to finish
                 executor.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-
-
     }
+
     private Color adaptiveSuperSampling(int j, int i, int gridSize, int maxDepth) {
         return adaptiveSuperSamplingRecursive(j, i, gridSize, maxDepth, 0);
     }
 
+    /**
+     *
+     * @param j
+     * @param i
+     * @param gridSize
+     * @param depth
+     * @param currentDepth
+     * The method recursively subdivides each pixel into smaller sub-pixels until a maximum depth is reached
+     * or all sub-pixels have similar colors.
+     *  For each sub-pixel, it constructs a ray passing through the sub-pixel's center and traces it into the scene.
+     *  It accumulates the colors obtained from tracing these rays for all sub-pixels.
+     *  If the colors of all sub-pixels are sufficiently close or the maximum depth is reached,
+     *  it returns the average color of these sub-pixels.
+     *  Otherwise, it recursively performs adaptive super-sampling on each sub-pixel until the base case is reached.
+     * @return average color
+     */
+//
     private Color adaptiveSuperSamplingRecursive(int j, int i, int gridSize, int depth, int currentDepth) {
         if (currentDepth >= depth) {
             return castRays(j, i, gridSize);
