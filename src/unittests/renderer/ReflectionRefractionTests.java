@@ -108,9 +108,9 @@ public class ReflectionRefractionTests {
 
     @Test
     public void test1() throws CloneNotSupportedException {
-        int GRIDSIZE = 9;
+        int GRIDSIZE = 3;
         boolean thread = true;
-        boolean adaptiveSuperSampling = true;
+        boolean adaptiveSuperSampling = false;
         scene.geometries.add(
                 //top sphere
                 new Sphere(new Point(0, 0, -10), 15d).setEmission(new Color(GRAY))
@@ -130,6 +130,12 @@ public class ReflectionRefractionTests {
                 //sun
                 new Sphere(new Point(-250, 250, -3000), 100d).setEmission(new Color(YELLOW))
                 .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(.7)));
+                //cloud
+                new Sphere(new Point(0, 5,5), 2d).setEmission(new Color(BLACK))
+                .setMaterial(new Material().setKd(0.4).setKs(0.3).setShininess(100).setkT(0.3));
+
+
+
         scene.geometries.add(
                 //top nose
                 new Triangle(new Point(-5, 0, 5), new Point(1, 0,5), new Point(-4, -5, 30))
